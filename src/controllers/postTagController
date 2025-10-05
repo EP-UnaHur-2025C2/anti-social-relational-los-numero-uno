@@ -1,0 +1,110 @@
+const db = require('../db/models'); 
+const PostTag = db.PostTag;
+const Tag = db.Tag;
+
+// AÑADE UNA TAG A UN POST
+
+const addTagToPost = async (req, res) => {
+    try {
+        const PostID = req.params.postId;
+        const { TagID } = req.body; 
+        
+
+        const [postTag, created] = await PostTag.findOrCreate({
+            where: { PostID: PostID, TagID: TagID },
+            defaults: { PostID: PostID, TagID: TagID }
+        });
+
+        if (!created) {
+            return res.status(409).json({ message: 'Esta etiqueta ya está asociada a este post.' });
+        }
+        
+        res.status(201).json(postTag);
+
+    } catch (error) {
+        console.error('Error al asociar Tag con Post:', error);
+        
+
+        if (error.name === 'SequelizeForeignKeyConstraintError') {
+             return res.status(404).json({ 
+                message: 'El PostID o TagID proporcionado no existe en la base de datos.'
+            });
+        }
+        
+        res.status(500).json({ 
+            message: 'Error interno del servidor al asociar la etiqueta.',
+            error: error.message
+        });
+    }
+};
+
+
+// BORRADO
+const removeTagFromPost = async (req, res) => {
+    try {
+        const { postId, tagId } = req.params;
+
+        // Eliminar el registro por las dos claves primarias 
+        const deletedRows = await PostTag.destroy({
+            where: { PostID: postId, TagID: tagId }
+        });
+
+        if (deletedRows === 0) {
+            
+            return res.status(404).json(); // 404 si se intenta eliminar algo que no existe
+        }
+        
+       
+        res.status(204).send();  // 204 Si se eliminó
+
+    } catch (error) {
+        console.error('Error al desvincular Tag de Post:', error);
+        res.status(500).json({ 
+            message: 'Error interno del servidor al desvincular la etiqueta.',
+            error: error.message
+        });
+    }
+};
+
+// OBTENER TAGS EN POST POR ID
+
+const getTagsByPostId = async (req, res) => {
+    try {
+        const { postId } = req.params;
+
+
+        const postTags = await PostTag.findAll({
+            where: { PostID: postId },
+
+            include: [{
+                model: Tag,
+                as: 'tag', 
+                attributes: ['id', 'Nombre'] 
+            }]
+        });
+
+        
+        if (postTags.length === 0) { // Si no hay tags, devuelve un array vacío y 200 OK.
+             return res.status(200).json([]);
+        }
+
+
+        const tags = postTags.map(pt => pt.tag);
+
+        res.status(200).json(tags);
+
+    } catch (error) {
+        console.error(`Error al obtener etiquetas para el Post ID ${req.params.postId}:`, error);
+        res.status(500).json({ 
+            message: 'Error interno del servidor al obtener las etiquetas.',
+            error: error.message
+        });
+    }
+};
+
+
+module.exports = {
+    addTagToPost,
+    removeTagFromPost,
+    getTagsByPostId
+};
