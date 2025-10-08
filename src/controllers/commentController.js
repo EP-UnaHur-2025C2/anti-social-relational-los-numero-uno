@@ -1,54 +1,30 @@
 const { Comment } = require("../../db/models");
-
-const getCommentsByUserInPost = async (req, res) => {
-  const { userId, postId } = req.params;
-  const comments = await Comment.findAll({
-    where: { userId, postId },
-    attributes: ["texto"],
-    include: [{ model: User, attributes: ["username"] }],
-  });
-
-  res.status(200).json(comments);
-};
-
-const getCommentsInPost = async (req, res) => {
-  const { postId } = req.params;
-  const comments = await Comment.findAll({
-    where: { postId },
-    attributes: ["texto"],
-    include: [
-      { model: Post, attributes: ["texto"] },
-      { model: User, attributes: ["username"] },
-    ],
-  });
-  res.status(200).json(comments);
-};
-
-const getCommentsById = async (req, res) => {
-  const { userId } = req.params;
-  const comments = await Comment.findAll({
-    where: { userId },
-    attributes: ["texto"],
-    include: [{ model: User, attributes: ["texto"] }],
-  });
-  res.status(200).json(comments);
-};
+const { Post } = require("../../db/models");
+const { User } = require("../../db/models");
 
 const addCommentInPost = async (req, res) => {
-  const { userId, postId } = req.params;
-  const { texto } = req.body;
+  const { postId } = req.params;
+  const { texto, userId } = req.body;
   const comment = await Comment.create({
     texto,
-    userId,
-    postId,
   });
-  res.status(201).json(comment);
+
+  const promesas = []; //Busco post y user para asociar el comentario y luego lo asocio
+  promesas.push(Post.findByPk(postId).then((post) => post.addComment(comment)));
+  promesas.push(User.findByPk(userId).then((user) => user.addComment(comment)));
+  await Promise.all(promesas);
+
+  res.status(201).json({
+      ...comment.dataValues,
+      user: await User.findByPk(userId),
+      post: await Post.findByPk(postId),
+    });
 };
 
 const changeCommentInPost = async (req, res) => {
   const { commentId } = req.params;
   const { texto } = req.body;
-  await Comment.update({ texto }, { where: { id: commentId } });
+  await Comment.update({ texto:texto }, { where: { id: commentId } });
   const comment = await Comment.findByPk(commentId, {
     attributes: ["id", "texto"],
   });
@@ -62,9 +38,6 @@ const deleteCommentInPost = async (req, res) => {
 };
 
 module.exports = {
-  getCommentsByUserInPost,
-  getCommentsInPost,
-  getCommentsById,
   addCommentInPost,
   changeCommentInPost,
   deleteCommentInPost,

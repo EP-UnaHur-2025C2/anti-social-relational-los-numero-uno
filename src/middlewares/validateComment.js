@@ -10,7 +10,7 @@ const createCommentSchema = Joi.object({
 });
 
 const validarText = (req, res, next) => {
-  const { error } = createCommentSchema.validate(req.body);
+  const { error } = createCommentSchema.validate(req.body.texto);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
