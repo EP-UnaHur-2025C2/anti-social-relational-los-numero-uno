@@ -35,14 +35,17 @@ router.put(
 
 // 6. Eliminar un comentario de un post
 router.delete(
-  "/user/:userId/post/:postId/comment/:commentId",
+  "/delete-comment/:commentId",
   /*
   validarIdParams,
-  validarUser,
-  validarPost,
   */
   validarComment,
   commentController.deleteCommentInPost
 );
 
+// 6. Obtener todos los comentarios, eliminar despues
+router.get(
+  "/",
+  commentController.getComments
+);
 module.exports = router;

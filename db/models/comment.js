@@ -15,16 +15,22 @@ module.exports = (sequelize, DataTypes) => {
   Comment.init(
     {
       texto: { type: DataTypes.STRING, allowNull: false },
-      visible: {type: DataTypes.VIRTUAL(DataTypes.BOOLEAN,["createdAt"]),
-        get: function() {
-          const creationDate = this.getDataValue("createdAt");
+      visible: {
+        type: DataTypes.VIRTUAL(DataTypes.BOOLEAN, ["createdAt"]),
+        get: function () {
+          const creationDate = new Date(this.getDataValue("createdAt"));
           const now = new Date();
           const diffTiempo = now - creationDate; //Diferencia en milisegundos
-          const diffMeses = diffTiempo / (1000 * 60 * 60 * 24 * 30); //Diferencia en meses
-          const varEntorno = process.env.DURACION_COMENTARIO_VISIBLE || 6; 
-          return diffMeses > varEntorno;
-        }
+          const diffMeses = Math.floor(
+            diffTiempo / (1000 * 60 * 60 * 24 * 30)
+          ); //Diferencia en meses
+          console.log("Diferencia en meses: ", diffMeses);
+          const varEntorno = process.env.DURACION_COMENTARIO_VISIBLE || 6;
+          return diffMeses <= varEntorno;
+        },
       },
+      createdAt: { type: DataTypes.DATEONLY, allowNull: false },
+      updatedAt: { type: DataTypes.DATEONLY, allowNull: false },
     },
     {
       sequelize,

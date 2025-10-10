@@ -12,16 +12,13 @@ module.exports = {
       texto: {
         type: Sequelize.STRING
       },
-      visible: {
-        type: Sequelize.BOOLEAN
-      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       }
     });
   },
