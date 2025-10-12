@@ -1,31 +1,46 @@
-const Joi = require("joi");
 const { Comment } = require("../../db/models");
+const {
+  createCommentSchema,
+  updateCommentSchema,
+} = require("../schemas/componenteSchema");
+const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
-const createCommentSchema = Joi.object({
-  texto: Joi.string().min(1).required().messages({
-    "string.base": `"texto" debe ser un texto`,
-    "string.empty": `"texto" no puede estar vacío`,
-    "any.required": `"texto" es obligatorio`,
-  }),
-});
+const mapErrors = (errores) => {
+  return errores.details.map((e) => {
+    return { atributo: e.path[0], mensaje: e.message };
+  });
+};
 
-const validarText = (req, res, next) => {
-  const { error } = createCommentSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
+const validarCreateCommentSchema = (req, res, next) => {
+  const errores = genericSchemaValidator(createCommentSchema, req.body);
+  if (errores) {
+    res.status(400).json(mapErrors(errores));
+    return;
   }
   next();
 };
 
-const validarComment = async (req, res, next) => {
+const validarCommentById = async (req, res, next) => {
   const comment = await Comment.findByPk(req.params.commentId);
   if (!comment) {
-    return res.status(400).json({ message: `El comentario con id ${req.params.commentId} no existe` });
+    res.status(400).json({
+      message: `El comentario con id ${req.params.commentId} no existe`,
+    });
+    return;
   }
   next();
 };
 
+const validarUpdateCommentSchema = (req, res, next) => {
+  const errores = genericSchemaValidator(updateCommentSchema, req.body);
+  if (errores) {
+    res.status(400).json(mapErrors(errores));
+    return;
+  }
+  next();
+};
 module.exports = {
-  validarText,
-  validarComment
+  validarCreateCommentSchema,
+  validarCommentById,
+  validarUpdateCommentSchema,
 };

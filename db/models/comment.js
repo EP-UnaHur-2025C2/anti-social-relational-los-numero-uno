@@ -30,11 +30,11 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       createdAt: { type: DataTypes.DATEONLY, allowNull: false },
-      updatedAt: { type: DataTypes.DATEONLY, allowNull: false },
     },
     {
       sequelize,
       modelName: "Comment",
+      timestamps: false
     }
   );
   return Comment;

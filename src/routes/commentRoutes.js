@@ -1,24 +1,20 @@
 const { Router } = require("express");
 const commentController = require("../controllers/commentController");
-const {validarText, validarComment} = require("../middlewares/validateComment");
+const {
+  validarCreateCommentSchema,
+  validarCommentById,
+  validarUpdateCommentSchema,
+} = require("../middlewares/validateComment");
 const router = Router();
-
-/*
-Implementarlos luego
-1. Obtener comentarios de un usuario en un post 
-2. Obtener comentarios de un post
-3. Obtener comentarios hechos por un usuario
-*/
 
 // 4. Crear un comentario en un post
 router.post(
-  "/create-comment/post/:postId",
+  "/create-comment/post/:postId/user/:userId",
   /*
-  validarIdParams,
-  validarUser,
-  validarPost,
+  validarUserById,
+  validarPostById,
   */
-  validarText,
+  validarCreateCommentSchema,
   commentController.addCommentInPost
 );
 
@@ -28,24 +24,24 @@ router.put(
   /*
   validarIdParams,
   */
-  validarComment,
-  validarText,
+  validarCommentById,
+  validarUpdateCommentSchema,
   commentController.changeCommentInPost
 );
 
 // 6. Eliminar un comentario de un post
 router.delete(
   "/delete-comment/:commentId",
-  /*
-  validarIdParams,
-  */
-  validarComment,
+  validarCommentById,
   commentController.deleteCommentInPost
 );
 
-// 6. Obtener todos los comentarios, eliminar despues
-router.get(
-  "/",
-  commentController.getComments
-);
+// 6. Obtener todos los comentarios
+router.get("/", commentController.getComments);
+
+//7. Obtener todos los comentarios visibles
+router.get("/visibles", commentController.getVisibleComments);
+
+//8. Obtener comentario especifico
+router.get("/:commentId", validarCommentById, commentController.getCommentById);
 module.exports = router;

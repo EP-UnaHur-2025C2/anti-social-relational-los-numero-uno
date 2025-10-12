@@ -7,10 +7,11 @@ const addCommentInPost = async (req, res) => {
   const { postId } = req.params;
   const { texto, userId } = req.body;
   */
-  const {texto} = req.body;
+  const { texto } = req.body;
 
   const comment = await Comment.create({
     texto,
+    createdAt: new Date().toISOString().slice(0, 10) // convierte la fecha a formato ISO YYYY-MM-DD
   });
 
   /*
@@ -29,10 +30,10 @@ const addCommentInPost = async (req, res) => {
 
 const changeCommentInPost = async (req, res) => {
   const { commentId } = req.params;
-  const { texto } = req.body;
-  await Comment.update({ texto: texto }, { where: { id: commentId } });
+  const { texto, createdAt } = req.body;
+  await Comment.update({ texto: texto, createdAt: createdAt}, { where: { id: commentId } });
   const comment = await Comment.findByPk(commentId, {
-    attributes: ["id", "texto"],
+    attributes: ["id", "texto", "createdAt"],
   });
   res.status(200).json(comment);
 };
@@ -43,15 +44,27 @@ const deleteCommentInPost = async (req, res) => {
   res.status(204).send();
 };
 
-//solo para probar get, eliminar despues
 const getComments = async (_, res) => {
   const comments = await Comment.findAll({});
   res.status(200).json(comments);
 };
 
+const getVisibleComments = async (_, res) => {
+  const comments = await Comment.findAll({ attributes: ["id", "texto", "createdAt"] });
+  const visibles = comments.filter((c) => c.visible);
+  res.status(200).json(visibles);
+};
+
+const getCommentById = async (req, res) => {
+  const { commentId } = req.params;
+  const comment = await Comment.findByPk(commentId, {});
+  res.status(200).json(comment);
+}
 module.exports = {
   addCommentInPost,
   changeCommentInPost,
   deleteCommentInPost,
-  getComments
+  getComments,
+  getVisibleComments,
+  getCommentById
 };
