@@ -1,1 +1,9 @@
-node_modules
+node_modules/
+init.js/
+src/db/
+src/models/comment.js/
+src/models/post_image.js/
+src/models/post_tags.js/
+src/models/tag.js/
+src/models/usuario.js/
+

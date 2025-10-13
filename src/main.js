@@ -1,14 +1,18 @@
 const express = require("express");
+const init = require("./init");
+const postRoute = require("./routes/post.route");
 const app = express();
-const db = require("../db/models");
-//const router = require('')
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT ?? 3000;
 
 app.use(express.json());
+app.use("/post", postRoute);
 
-//app.use('', router)
+app.listen(PORT, async (err) => {
+  if (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
 
-app.listen(PORT, async () => {
-  console.log(`El servidor esta corriendo en el puerto ${PORT}`);
-  await db.sequelize.sync();
+  console.log(`Aplicacion iniciada correctamente en el puerto ${PORT}`);
 });
