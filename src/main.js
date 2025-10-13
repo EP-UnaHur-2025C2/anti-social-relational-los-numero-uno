@@ -3,6 +3,9 @@ const app = express();
 const db = require("../db/models");
 //const router = require('')
 const PORT = process.env.PORT || 3000;
+const postImageRoutes = require("./routes/postImageRoutes");
+app.use("/postImage", postImageRoutes);
+
 
 app.use(express.json());
 
