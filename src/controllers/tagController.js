@@ -1,6 +1,4 @@
-
-
-const db = require('../db/models'); 
+const db = require('../../db/models'); 
 const Tag = db.Tag; 
 
 // CREAR TAG
