@@ -3,6 +3,7 @@
 const express = require('express');
 
 const tagController = require('../controllers/tagController');
+const { validateTag } = require('../middlewares/validateTags'); 
 
 
 

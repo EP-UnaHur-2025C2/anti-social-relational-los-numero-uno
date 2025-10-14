@@ -1,8 +1,7 @@
 const express = require('express');
 const postTagController = require('../controllers/postTagController');
-const { validatePostTagAssociation } = require('../middlewares/postTagValidator');
-
-
+const { validatePostTagAssociation } = require('../middlewares/validatePostTag');
+const router = express.Router();
 
 
 // ASOCIA UN TAG A UN POST
