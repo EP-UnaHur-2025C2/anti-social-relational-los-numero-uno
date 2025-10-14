@@ -2,6 +2,7 @@ const { Comment } = require("../../db/models");
 const {
   createCommentSchema,
   updateCommentSchema,
+  dateSchema
 } = require("../schemas/componenteSchema");
 const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
@@ -39,8 +40,18 @@ const validarUpdateCommentSchema = (req, res, next) => {
   }
   next();
 };
+
+const validarDate = (req, res, next) => {
+  const errores = genericSchemaValidator(dateSchema, req.body);
+  if (errores) {
+    res.status(400).json(mapErrors(errores));
+    return;
+  }
+  next();
+}
 module.exports = {
   validarCreateCommentSchema,
   validarCommentById,
   validarUpdateCommentSchema,
+  validarDate
 };

@@ -4,10 +4,11 @@ const {
   validarCreateCommentSchema,
   validarCommentById,
   validarUpdateCommentSchema,
+  validarDate
 } = require("../middlewares/validateComment");
 const router = Router();
 
-// 4. Crear un comentario en un post
+// 1. Crear un comentario en un post
 router.post(
   "/create-comment/post/:postId/user/:userId",
   /*
@@ -18,7 +19,7 @@ router.post(
   commentController.addCommentInPost
 );
 
-// 5. Modificar un comentario de un post
+// 2. Modificar un comentario de un post
 router.put(
   "/modify-comment/:commentId",
   /*
@@ -29,19 +30,63 @@ router.put(
   commentController.changeCommentInPost
 );
 
-// 6. Eliminar un comentario de un post
+// 3. Eliminar un comentario de un post
 router.delete(
   "/delete-comment/:commentId",
   validarCommentById,
   commentController.deleteCommentInPost
 );
 
-// 6. Obtener todos los comentarios
+// 4. Obtener todos los comentarios
 router.get("/", commentController.getComments);
 
-//7. Obtener todos los comentarios visibles
+// 5. Obtener todos los comentarios visibles
 router.get("/visibles", commentController.getVisibleComments);
 
-//8. Obtener comentario especifico
-router.get("/:commentId", validarCommentById, commentController.getCommentById);
+// 6. obtener todos los comentarios en una fecha especifica
+router.get(
+  "/especific-date/",
+  validarDate,
+  commentController.getCommentsInDate
+);
+
+// 7. Obtener comentario especifico
+router.get(
+  "/:commentId", 
+  validarCommentById, 
+  commentController.getCommentById
+);
+
+// 8. obtener todos los comentarios de un post
+router.get(
+  "/post/:postId",
+  /*validarPostById,*/ 
+  commentController.getCommentsInPostById
+);
+
+// 9. obtener todos los comentarios de un usuario
+router.get(
+  "/user/:userId",
+  /*validarUserById,*/ 
+  commentController.getUserCommentsById
+);
+
+// 10. obtener todos los comentarios de un usuario en un post especifico
+router.get(
+  "/post/:postId/user/:userId",
+  /*
+  validarPostById,
+  validarUserById,
+  */ 
+  commentController.getUserCommentsInPostById
+);
+
+// 11. obtener la cantidad de comentarios de un post
+router.get(
+  "/post/:postId",
+  /*
+  validarPostById,
+  */ 
+  commentController.getAmountCommentsInPostById
+);
 module.exports = router;

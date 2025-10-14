@@ -60,11 +60,51 @@ const getCommentById = async (req, res) => {
   const comment = await Comment.findByPk(commentId, {});
   res.status(200).json(comment);
 }
+
+const getCommentsInPostById = async (req, res) => {
+  const { postId } = req.params;
+  const post = await Post.findByPk(postId);
+  const comments = await post.getComments();
+  res.status(200).json(comments);
+}
+
+const getUserCommentsById = async (req, res) => {
+  const { userId } = req.params;
+  const user = await User.findByPk(userId);
+  const comments = await user.getComments();
+  res.status(200).json(comments);
+}
+
+const getUserCommentsInPostById = async (req, res) => {
+  const { postId, userId } = req.params;
+  const post = await Post.findByPk(postId);
+  const comments = await post.getComments({ where: { userId: userId } });
+  res.status(200).json(comments);
+}
+
+const getCommentsInDate = async (req, res) => {
+  const { createdAt } = req.body;
+  const comments = await Comment.findAll({ where: { createdAt: createdAt } });
+  res.status(200).json(comments);
+}
+
+const getAmountCommentsInPostById = async (req, res) => {
+  const { postId } = req.params;
+  const post = await Post.findByPk(postId);
+  const comments = await post.getComments();
+  res.status(200).json({ cantidadComentarios: comments.length });
+}
+
 module.exports = {
   addCommentInPost,
   changeCommentInPost,
   deleteCommentInPost,
   getComments,
   getVisibleComments,
-  getCommentById
+  getCommentById,
+  getCommentsInPostById,
+  getUserCommentsById,
+  getUserCommentsInPostById,
+  getCommentsInDate,
+  getAmountCommentsInPostById
 };

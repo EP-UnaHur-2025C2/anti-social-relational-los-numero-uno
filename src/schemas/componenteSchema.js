@@ -1,19 +1,30 @@
 const Joi = require("joi");
 
+const textoSchema = Joi.string().min(1).messages({
+  "string.base": `El atributo "texto" debe ser un texto`,
+  "string.empty": `El texto no puede estar vacío`,
+});
+
+const baseCommentSchema = {
+  texto: textoSchema,
+  createdAt: Joi.date().iso().messages({
+    "date.base": `"createdAt" debe ser una fecha`,
+    "date.format": `"createdAt" debe estar en formato ISO 8601 (YYYY-MM-DD)`,
+  }),
+};
+
 const createCommentSchema = Joi.object({
-  texto: Joi.string().min(1).required().messages({
-    "string.base": `El atributo "texto" debe ser un texto`,
-    "string.empty": `El texto no puede estar vacío`,
+  ...baseCommentSchema,
+  texto: textoSchema.required().messages({
     "any.required": `El comentario debe tener un atributo texto`,
   }),
 });
 
-const updateCommentSchema = Joi.object({
-  texto: Joi.string().min(1).messages({
-    "string.base": `El atributo "texto" debe ser un texto`,
-    "string.empty": `El texto no puede estar vacío`,
-  }),
-  createdAt: Joi.date().iso().messages({
+const updateCommentSchema = Joi.object(baseCommentSchema);
+
+const dateSchema = Joi.object({
+  createdAt: Joi.date().iso().required().messages({
+    "any.required": `"createdAt" es obligatorio`,
     "date.base": `"createdAt" debe ser una fecha`,
     "date.format": `"createdAt" debe estar en formato ISO 8601 (YYYY-MM-DD)`,
   }),
@@ -22,4 +33,5 @@ const updateCommentSchema = Joi.object({
 module.exports = {
   createCommentSchema,
   updateCommentSchema,
+  dateSchema,
 };
