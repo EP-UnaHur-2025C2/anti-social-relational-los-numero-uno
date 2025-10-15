@@ -25,6 +25,10 @@ const init = async () => {
     texto: "Comentario de prueba",
   });
 
+   const comentario2 = await Comment.create({
+    texto: "Comentario de prueba2",
+  });
+
   const imagen = await Post_Image.create({
     url: "hhtps://lalala.com",
   });
@@ -33,6 +37,7 @@ const init = async () => {
   await user.addPost(post2);
   await post1.addTag(tag1);
   await post1.addComment(comentario);
+  await post1.addComment(comentario2);
 };
 
 module.exports = init;

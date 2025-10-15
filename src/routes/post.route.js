@@ -9,17 +9,20 @@ const {
 } = require("../controllers/post.controller");
 
 const {
-  validarBodyPost,
-} = require("../middlewares/post.middleware");
+  validarPost,
+  validarPostById,
+  validarFecha,
+  validarUsuario,
+} = require("../middlewares/validatePost");
 
 const route = Router();
 
-route.get("/fecha", verDesdeFecha);
+route.get("/fecha", validarFecha, verDesdeFecha);
 route.get("/", findAll);
-route.get("/:id", findByPk);
-route.post("/", validarBodyPost, crearPost);
-route.put("/:id", actualizarPost);
-route.delete("/:id", eliminarPost);
+route.get("/:id", validarPostById, findByPk);
+route.post("/", validarUsuario, validarPost, crearPost);
+route.put("/:id", validarPostById, actualizarPost);
+route.delete("/:id", validarPostById, eliminarPost);
 
 
 module.exports = route;

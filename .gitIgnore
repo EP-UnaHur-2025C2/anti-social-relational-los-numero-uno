@@ -1,9 +1,8 @@
 node_modules/
 init.js/
-src/db/
-src/models/comment.js/
-src/models/post_image.js/
-src/models/post_tags.js/
-src/models/tag.js/
-src/models/usuario.js/
+src/db/models/comment.js/
+src/db/models/post_image.js/
+src/db/models/post_tags.js/
+src/db/models/tag.js/
+src/db/models/usuario.js/
 

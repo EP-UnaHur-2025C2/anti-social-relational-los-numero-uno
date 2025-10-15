@@ -44,8 +44,30 @@ const findByPk = async (req, res) => {
   res.status(200).json(data);
 };
 
+const findByPkVisibles = async (req, res) => {
+  const id = req.params.id;
+  const data = await Post.findByPk(id,{
+      include: [
+        {
+          model: Comment,
+          attributes: ["texto"],
+          where: { visible: true }
+        },
+        {
+          model: Post_Image,
+          attributes: ["url"]
+        },
+        {
+          model: Tag,
+          attributes: ["nombre"]
+        }
+      ],
+  });
+  res.status(200).json(data);
+};
+
 const verDesdeFecha = async (req, res) => {
-  const fecha =  req.query.fecha; // '2023-10-01'
+  const fecha =  req.body.fecha; // '2023-10-01'
   console.log(fecha);
   const fechaConvertida = new Date(fecha);
   const data = await Post.findAll({ 
@@ -65,13 +87,13 @@ const crearPost = async (req, res) => {
 const actualizarPost = async (req, res) => {
   const post = await Post.findByPk(req.params.id)
   await post.update(req.body)
-  res.json(post)
+   res.status(201).json(post)
 }
 
 const eliminarPost = async (req, res) => {
   const post = await Post.findByPk(req.params.id)
   await post.destroy()
-  res.json({ message: 'Post eliminado correctamente' })
+  res.status(200).json({ message: 'Post eliminado correctamente' })
 }
 
-module.exports = { findAll, findByPk, crearPost, actualizarPost, eliminarPost, verDesdeFecha };
+module.exports = { findAll, findByPk, crearPost, actualizarPost, eliminarPost, verDesdeFecha, findByPkVisibles };
