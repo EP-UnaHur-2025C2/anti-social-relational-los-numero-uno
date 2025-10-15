@@ -1,5 +1,5 @@
 node_modules/
-init.js/
+src/init.js/
 src/db/models/comment.js/
 src/db/models/post_image.js/
 src/db/models/post_tags.js/

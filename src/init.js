@@ -36,8 +36,9 @@ const init = async () => {
   await user.addPost(post1);
   await user.addPost(post2);
   await post1.addTag(tag1);
-  await post1.addComment(comentario);
-  await post1.addComment(comentario2);
+  await post1.addComentarios(comentario);
+  await post1.addComentarios(comentario2);
+  await post1.addImagenes(imagen);
 };
 
 module.exports = init;
