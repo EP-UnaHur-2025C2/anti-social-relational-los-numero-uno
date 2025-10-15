@@ -24,7 +24,7 @@ const validarCreateCommentSchema = (req, res, next) => {
 const validarCommentById = async (req, res, next) => {
   const comment = await Comment.findByPk(req.params.commentId);
   if (!comment) {
-    res.status(400).json({
+    res.status(404).json({
       message: `El comentario con id ${req.params.commentId} no existe`,
     });
     return;
@@ -42,7 +42,7 @@ const validarUpdateCommentSchema = (req, res, next) => {
 };
 
 const validarDate = (req, res, next) => {
-  const errores = genericSchemaValidator(dateSchema, req.body);
+  const errores = genericSchemaValidator(dateSchema, req.params);
   if (errores) {
     res.status(400).json(mapErrors(errores));
     return;

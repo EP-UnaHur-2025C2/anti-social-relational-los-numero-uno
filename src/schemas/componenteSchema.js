@@ -23,11 +23,16 @@ const createCommentSchema = Joi.object({
 const updateCommentSchema = Joi.object(baseCommentSchema);
 
 const dateSchema = Joi.object({
-  createdAt: Joi.date().iso().required().messages({
-    "any.required": `"createdAt" es obligatorio`,
-    "date.base": `"createdAt" debe ser una fecha`,
-    "date.format": `"createdAt" debe estar en formato ISO 8601 (YYYY-MM-DD)`,
-  }),
+  createdAt: Joi.date()
+    .iso()
+    .max("now")
+    .required()
+    .messages({
+      "any.required": `"createdAt" es obligatorio`,
+      "date.base": `"createdAt" debe ser una fecha`,
+      "date.format": `"createdAt" debe estar en formato ISO 8601 (YYYY-MM-DD)`,
+      "date.max": `"createdAt" no puede ser una fecha futura`,
+    }),
 });
 
 module.exports = {

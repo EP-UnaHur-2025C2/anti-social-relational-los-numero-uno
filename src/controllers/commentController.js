@@ -83,7 +83,7 @@ const getUserCommentsInPostById = async (req, res) => {
 }
 
 const getCommentsInDate = async (req, res) => {
-  const { createdAt } = req.body;
+  const { createdAt } = req.params;
   const comments = await Comment.findAll({ where: { createdAt: createdAt } });
   res.status(200).json(comments);
 }
