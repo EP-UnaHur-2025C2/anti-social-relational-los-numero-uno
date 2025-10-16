@@ -89,6 +89,26 @@ const router = Router();
  *               $ref: '#/components/schemas/Comment'
  *       400:
  *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       atributo:
+ *                         type: string
+ *                       mensaje:
+ *                         type: string
+ *             examples:
+ *               errorCampos:
+ *                 value:
+ *                   errors:
+ *                     - atributo: "texto"
+ *                       mensaje: "El texto es obligatorio"
  */
 router.post(
   "/create-comment/post/:postId/user/:userId",
@@ -138,8 +158,43 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       atributo:
+ *                         type: string
+ *                       mensaje:
+ *                         type: string
+ *             examples:
+ *               errorCampos:
+ *                 value:
+ *                   errors:
+ *                     - atributo: "texto"
+ *                       mensaje: "El texto no puede estar vacío"
+ *                     - atributo: "fecha"
+ *                       mensaje: "La fecha no es válida"
  *       404:
  *         description: Comentario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El comentario con id 123 no existe"
  */
 router.put(
   "/modify-comment/:commentId",
@@ -170,6 +225,17 @@ router.put(
  *         description: Comentario eliminado exitosamente
  *       404:
  *         description: Comentario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El comentario con id 123 no existe"
  */
 router.delete(
   "/delete-comment/:commentId",
@@ -193,10 +259,24 @@ router.delete(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *             examples:
+ *               comentarios:
+ *                 value:
+ *                   - id: 1
+ *                     texto: "Comentario ejemplo"
+ *                     userId: 45
+ *                     postId: 67
+ *                     fecha: "2024-06-01"
+ *                     visible: true
+ *                   - id: 2
+ *                     texto: "Otro comentario"
+ *                     userId: 46
+ *                     postId: 67
+ *                     fecha: "2024-06-02"
+ *                     visible: false
  */
 router.get("/", commentController.getComments);
 
-// 5. Obtener todos los comentarios visibles
 /**
  * @swagger
  * /comments/visibles:
@@ -224,10 +304,15 @@ router.get("/", commentController.getComments);
  *                     type: string
  *                     format: dateonly
  *                     example: "2024-06-01"
+ *             examples:
+ *               comentariosVisibles:
+ *                 value:
+ *                   - id: 1
+ *                     texto: "Comentario visible"
+ *                     createdAt: "2024-06-01"
  */
 router.get("/visibles", commentController.getVisibleComments);
 
-// 6. obtener todos los comentarios en una fecha especifica
 /**
  * @swagger
  * /comments/especific-date/{createdAt}:
@@ -252,6 +337,15 @@ router.get("/visibles", commentController.getVisibleComments);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *             examples:
+ *               comentariosFecha:
+ *                 value:
+ *                   - id: 1
+ *                     texto: "Comentario en fecha"
+ *                     userId: 45
+ *                     postId: 67
+ *                     fecha: "2024-06-01"
+ *                     visible: true
  */
 router.get(
   "/especific-date/:createdAt",
@@ -259,7 +353,6 @@ router.get(
   commentController.getCommentsInDate
 );
 
-// 7. Obtener comentario especifico
 /**
  * @swagger
  * /comments/{commentId}:
@@ -280,8 +373,28 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Comment'
+ *             examples:
+ *               comentario:
+ *                 value:
+ *                   id: 1
+ *                   texto: "Comentario ejemplo"
+ *                   userId: 45
+ *                   postId: 67
+ *                   fecha: "2024-06-01"
+ *                   visible: true
  *       404:
  *         description: Comentario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El comentario con id 123 no existe"
  */
 router.get(
   "/:commentId", 
@@ -289,7 +402,6 @@ router.get(
   commentController.getCommentById
 );
 
-// 8. obtener todos los comentarios de un post
 /**
  * @swagger
  * /comments/post/{postId}:
@@ -312,6 +424,28 @@ router.get(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *             examples:
+ *               comentariosPost:
+ *                 value:
+ *                   - id: 1
+ *                     texto: "Comentario en post"
+ *                     userId: 45
+ *                     postId: 67
+ *                     fecha: "2024-06-01"
+ *                     visible: true
+ *       404:
+ *         description: Post no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El post con id 123 no existe"
  */
 router.get(
   "/post/:postId",
@@ -319,7 +453,6 @@ router.get(
   commentController.getCommentsInPostById
 );
 
-// 9. obtener todos los comentarios de un usuario
 /**
  * @swagger
  * /comments/user/{userId}:
@@ -342,6 +475,28 @@ router.get(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *             examples:
+ *               comentariosUsuario:
+ *                 value:
+ *                   - id: 1
+ *                     texto: "Comentario de usuario"
+ *                     userId: 45
+ *                     postId: 67
+ *                     fecha: "2024-06-01"
+ *                     visible: true
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El usuario con id 123 no existe"
  */
 router.get(
   "/user/:userId",
@@ -349,7 +504,6 @@ router.get(
   commentController.getUserCommentsById
 );
 
-// 10. obtener todos los comentarios de un usuario en un post especifico
 /**
  * @swagger
  * /comments/post/{postId}/user/{userId}:
@@ -378,6 +532,28 @@ router.get(
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *             examples:
+ *               comentariosUsuarioPost:
+ *                 value:
+ *                   - id: 1
+ *                     texto: "Comentario de usuario en post"
+ *                     userId: 45
+ *                     postId: 67
+ *                     fecha: "2024-06-01"
+ *                     visible: true
+ *       404:
+ *         description: Post o usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El post con id 123 no existe"
  */
 router.get(
   "/post/:postId/user/:userId",
@@ -388,7 +564,6 @@ router.get(
   commentController.getUserCommentsInPostById
 );
 
-// 11. obtener la cantidad de comentarios de un post
 /**
  * @swagger
  * /comments/post/{postId}/count:
@@ -413,6 +588,10 @@ router.get(
  *                 count:
  *                   type: integer
  *                   description: Número de comentarios
+ *             examples:
+ *               cantidadComentarios:
+ *                 value:
+ *                   count: 2
  */
 router.get(
   "/post/:postId",

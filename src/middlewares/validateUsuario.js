@@ -1,6 +1,7 @@
 const { Usuario } = require("../../db/models");
 const {
-  userSchema
+  userSchema,
+  updateUserSchema
 } = require("../schemas/userSchema.js");
 const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
@@ -20,17 +21,40 @@ const validarUser = (req, res, next) => {
 };
 
 const validarUserById = async (req, res, next) => {
-  const user = await Usuario.findByPk(req.params.id);
+  const user = await Usuario.findByPk(req.params.userId);
   if (!user) {
     res.status(400).json({
-      message: `El user con id ${req.params.id} no existe`,
+      message: `El user con id ${req.params.userId} no existe`,
     });
     return;
   }
   next();
 }; 
 
+const validarUserUpdate = (req, res, next) => {
+  const error = genericSchemaValidator(updateUserSchema, req.body);
+  if (error) {
+    res.status(400).json(mapErrors(error));
+    return;
+  }
+  next();
+}
+
+const validarNickName = async (req, res, next) => {
+  const { nickName } = req.body;
+  users = await Usuario.findAll({where: {nickName}});
+  if (users.length > 0) {
+    res.status(400).json({
+      message: `El nickName ${nickName} ya existe`,
+    });
+    return;
+  }
+  next();
+}
+
 module.exports = {
     validarUser,
-    validarUserById
+    validarUserById,
+    validarUserUpdate,
+    validarNickName
 }

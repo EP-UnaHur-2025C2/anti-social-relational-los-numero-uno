@@ -1,23 +1,39 @@
 const Joi = require("joi")
 
-const userSchema = Joi.object({
-    nickname: Joi.string()
-        .alphanum()
-        .min(3)
-        .max(30).messages({
-            "any.required": 'nickname es obligatorio',
-            "nickname.base": 'nickname debe estar compuesto únicamente por caracteres alfanuméricos',
-            "nickname.empty": 'nickname no puede estar vacío'
-        }),
-    
-    email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).messages({
-        "any.required": 'nickname es obligatorio',
-        "email.base": 'email debe estar compuesto por un mínimo de dos dominios. Ej: loreipsum@outlook.com',
-        "email.empty": 'email no puede estar vacío'
-    })
-})
+const nickName = Joi.string()
+    .alphanum()
+    .min(3)
+    .max(30)
+    .messages({
+        "string.min": 'nickname debe tener al menos 3 caracteres',
+        "string.max": 'nickname debe tener como máximo 30 caracteres',
+        "string.base": 'nickname debe ser un texto',
+        "string.alphanum": 'nickname debe estar compuesto únicamente por caracteres alfanuméricos',
+        "string.empty": 'nickname no puede estar vacío'
+    });
 
-module.export = {
-    userSchema
+const mail = Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+    .messages({
+        "string.email": 'email debe estar compuesto por un mínimo de dos dominios. Ej: loreipsum@outlook.com',
+        "string.empty": 'email no puede estar vacío'
+    });
+
+const userSchema = Joi.object({
+    nickName: nickName.required().messages({
+        "any.required": 'nickname es obligatorio'
+    }),
+    mail: mail.required().messages({
+        "any.required": 'email es obligatorio'
+    })
+});
+
+const updateUserSchema = Joi.object({
+    nickName,
+    mail
+});
+
+module.exports = {
+    userSchema,
+    updateUserSchema
 }
