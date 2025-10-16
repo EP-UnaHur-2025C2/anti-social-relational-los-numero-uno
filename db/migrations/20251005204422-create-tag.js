@@ -10,15 +10,9 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       Nombre: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        unique: true
       }
     });
   },

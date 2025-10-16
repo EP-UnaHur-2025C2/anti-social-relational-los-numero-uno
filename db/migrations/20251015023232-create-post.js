@@ -10,18 +10,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       texto: {
-        type: Sequelize.STRING
-      },
-      userID: {
-        type: Sequelize.INTEGER
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.STRING,
+        allowNull: false
       }
     });
   },

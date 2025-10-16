@@ -1,42 +1,23 @@
-
+'use strict';
 const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class PostTag extends Model {
     static associate(models) {
-      
-      
-
-
-      PostTag.belongsTo(models.Tag, { // PostTag pertenece a Tag (Clave Foránea TagID)
-        foreignKey: 'TagID',
+      PostTag.belongsTo(models.Tag, { // PostTag pertenece a Tag (Clave Foránea TagId)
+        foreignKey: 'TagId',
         as: 'tag'
       });
-      
-      /* Comentado hasta que se cree Post
       PostTag.belongsTo(models.Post, {
-        foreignKey: 'PostID',
+        foreignKey: 'PostId',
         as: 'post'
-      });
-
-      
-  */
+      }); // Asociación agregada con Post (muchos a uno)
     }
-    
   }
 
   PostTag.init({
-    PostID: {
-      type: DataTypes.INTEGER,
-      primaryKey: true, 
-      allowNull: false
-    },
-    TagID: {
-      type: DataTypes.INTEGER,
-      primaryKey: true, 
-      allowNull: false
-    }
+    
   }, {
     sequelize,
     modelName: 'PostTag',
