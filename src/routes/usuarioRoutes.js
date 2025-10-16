@@ -20,4 +20,4 @@ route.put("/:id", validarUserById, actualizarUser);
 route.delete("/:id", validarUserById, eliminarUser);
 
 
-modules.export = route;
+module.exports = route;

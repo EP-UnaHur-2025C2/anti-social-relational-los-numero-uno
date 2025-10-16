@@ -1,6 +1,6 @@
 const { Comment } = require("../../db/models");
 const { Post } = require("../../db/models");
-const { User } = require("../../db/models");
+const { Usuario } = require("../../db/models");
 
 const addCommentInPost = async (req, res) => {
   /*

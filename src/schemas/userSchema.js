@@ -18,6 +18,6 @@ const userSchema = Joi.object({
     })
 })
 
-modules.export = {
-    usernameSchema
+module.export = {
+    userSchema
 }

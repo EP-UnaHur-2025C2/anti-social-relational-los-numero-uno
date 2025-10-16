@@ -1,8 +1,8 @@
-const { user } = require("../db/models");
+const { Usuario } = require("../../db/models");
 const {
-  userSchema,
-} = require("../../schemas/user.schema.js");
-const genericSchemaValidator = require("../../schemas/genericSchemaValidator");
+  userSchema
+} = require("../schemas/userSchema.js");
+const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
 const mapErrors = (errores) => {
   return errores.details.map((e) => {
@@ -20,8 +20,8 @@ const validarUser = (req, res, next) => {
 };
 
 const validarUserById = async (req, res, next) => {
-  const post = await user.findByPk(req.params.id);
-  if (!post) {
+  const user = await Usuario.findByPk(req.params.id);
+  if (!user) {
     res.status(400).json({
       message: `El user con id ${req.params.id} no existe`,
     });
@@ -30,7 +30,7 @@ const validarUserById = async (req, res, next) => {
   next();
 }; 
 
-modules.export = {
+module.exports = {
     validarUser,
     validarUserById
 }
