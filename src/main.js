@@ -1,5 +1,4 @@
 const express = require("express");
-const init = require("./init");
 const postRoute = require("./routes/post.route");
 const app = express();
 
