@@ -6,11 +6,7 @@ const {
 } = require("../schemas/componenteSchema");
 const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
-const mapErrors = (errores) => {
-  return errores.details.map((e) => {
-    return { atributo: e.path[0], mensaje: e.message };
-  });
-};
+const mapErrors = require("./mapErrors");
 
 const validarCreateCommentSchema = (req, res, next) => {
   const errores = genericSchemaValidator(createCommentSchema, req.body);

@@ -1,29 +1,56 @@
+const {tagSchema, updateTagSchema} = require('../schemas/tagSchema');
+const genericSchemaValidator = require('../schemas/genericSchemaValidator');
+const mapErrors = require('./mapErrors');
+const { Tag } = require('../../db/models');
 
-exports.validateTag = (req, res, next) => {
-
-    const { Nombre } = req.body;
-
-    // erificar que el campo 'Nombre' esté presente
-    if (!Nombre) {
-        return res.status(400).json({ 
-            message: 'El campo "Nombre" es obligatorio para crear o actualizar una etiqueta.' 
-        });
+const validarTag = (req, res, next) => {
+    const error = genericSchemaValidator(tagSchema, req.body);
+    if (error) {
+        res.status(400).json(mapErrors(error));
+        return;
     }
-
-    // Verifica que el nombre no esté vacío o solo sean espacios
-    const nombreLimpio = Nombre.trim();
-    if (nombreLimpio.length === 0) {
-        return res.status(400).json({ 
-            message: 'El nombre de la etiqueta no puede estar vacío.' 
-        });
-    }
-
-    //Limitar la longitud del nombre (ejemplo: máx 50 caracteres)
-    if (nombreLimpio.length > 50) {
-        return res.status(400).json({ 
-            message: 'El nombre de la etiqueta no puede exceder los 50 caracteres.' 
-        });
-    }
-
     next();
+};
+
+const validarUpdateTag = (req, res, next) => {
+    const error = genericSchemaValidator(tagSchema, req.body);
+    if (error) {
+        res.status(400).json(mapErrors(error));
+        return;
+    }
+    next();
+};
+
+const validarNombreTag = async (req, res, next) => {
+    const { Nombre } = req.body;
+    if (!Nombre) {
+        next(); // si no hay nombre en el body sigue al siguiente middleware
+        return;
+    }
+    const tags = await Tag.findAll({where: {Nombre}});
+    if (tags.length > 0) {
+        res.status(400).json({
+            message: `La tag con nombre ${Nombre} ya existe`,
+        });
+        return;
+    }
+    next();
+}
+
+const validarTagByid = async (req, res, next) => {
+    const tag = await Tag.findByPk(req.params.tagId);
+    if (!tag) {
+        res.status(400).json({
+            message: `La tag con id ${req.params.tagId} no existe`,
+        });
+        return;
+    }
+    next();
+};
+
+module.exports = {
+    validarTag,
+    validarUpdateTag,
+    validarNombreTag,
+    validarTagByid
 };

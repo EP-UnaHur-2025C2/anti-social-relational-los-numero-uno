@@ -5,11 +5,7 @@ const {
 } = require("../schemas/userSchema.js");
 const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
-const mapErrors = (errores) => {
-  return errores.details.map((e) => {
-    return { atributo: e.path[0], mensaje: e.message };
-  });
-};
+const mapErrors = require("./mapErrors");
 
 const validarUser = (req, res, next) => {
   const error = genericSchemaValidator(userSchema, req.body);
@@ -42,6 +38,10 @@ const validarUserUpdate = (req, res, next) => {
 
 const validarNickName = async (req, res, next) => {
   const { nickName } = req.body;
+  if (!nickName) {
+    next(); // si no hay nick en el body sigue al siguiente middleware
+    return;
+  }
   users = await Usuario.findAll({where: {nickName}});
   if (users.length > 0) {
     res.status(400).json({

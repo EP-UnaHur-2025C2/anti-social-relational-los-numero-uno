@@ -1,4 +1,4 @@
-const { Router } = require('express');
+const { Router } = require("express");
 const {
   findAll,
   findByPk,
@@ -11,9 +11,9 @@ const {
   validarUser,
   validarUserById,
   validarUserUpdate,
-  validarNickName
+  validarNickName,
 } = require("../middlewares/validateUsuario.js");
-const route = Router()
+const route = Router();
 
 /**
  * @swagger
@@ -35,7 +35,7 @@ const route = Router()
  *           format: email
  *           description: Correo electrónico del usuario
  *           example: "lautaro@gmail.com"
-*/
+ */
 
 //1. crear usuario VERIFICADO
 /**
@@ -92,8 +92,7 @@ const route = Router()
  *                     - atributo: "mail"
  *                       mensaje: "mail debe ser un email válido"
  */
-route.post("/create-usuario", validarNickName,validarUser, createUser);
-
+route.post("/create-usuario", validarNickName, validarUser, createUser);
 
 //2. actualizar usuario VERIFICADO
 /**
@@ -156,7 +155,13 @@ route.post("/create-usuario", validarNickName,validarUser, createUser);
  *                     - atributo: "mail"
  *                       mensaje: "mail debe ser un email válido"
  */
-route.put("/modify-usuario/:userId", validarNickName, validarUserById, actualizarUser);
+route.put(
+  "/modify-usuario/:userId",
+  validarNickName,
+  validarUserById,
+  validarUserUpdate,
+  actualizarUser
+);
 
 //3. eliminar usuario VERIFICADO
 /**
@@ -254,7 +259,7 @@ route.get("/", findAll);
  *               errorId:
  *                 value:
  *                   message: "El user con id 123 no existe"
-*/
+ */
 route.get("/:userId", validarUserById, findByPk);
 
 module.exports = route;
