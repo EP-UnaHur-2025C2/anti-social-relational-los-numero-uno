@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   
     static associate(models) {
       Post.belongsTo(models.Usuario)
-      Post.belongsToMany(models.Tag, {through:"PostTags" } ) //alias
+      Post.belongsToMany(models.Tag, {through:"PostTags" } )
       Post.hasMany(models.Post_Image , {as:"Imagenes"} ) //alias
       Post.hasMany(models.Comment, {as:"Comentarios"} ) //alias 
     }
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Post',
-    timestamps:true,
+    timestamps:true
   });
   return Post;
 };

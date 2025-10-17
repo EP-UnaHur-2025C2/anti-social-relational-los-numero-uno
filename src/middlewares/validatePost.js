@@ -1,4 +1,4 @@
-const { Post } = require("../db/models");
+const { Post, Usuario } = require("../db/models");
 const {
   postSchema,
   dateSchema,
@@ -41,7 +41,7 @@ const validarFecha = (req, res, next) => {
 };
 
 const validarUsuario = async (req, res, next) => {
-  const usuarioBuscado = req.params.usuario;
+  const usuarioBuscado = req.Usuario.id;
   const usuarioEncontrado = await Usuario.findOne({ where: { usuarioBuscado } });
   if (!usuarioEncontrado) {
     res.status(400).json({
@@ -56,5 +56,5 @@ module.exports = {
   validarPost,
   validarPostById,
   validarFecha,
-  validarUsuario,
+  validarUsuario
 };

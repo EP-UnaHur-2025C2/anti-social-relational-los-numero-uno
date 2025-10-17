@@ -3,9 +3,10 @@ const {
   findAll,
   findByPk,
   crearPost,
-  actualizarPost,
   eliminarPost,
   verDesdeFecha,
+  agregarImagenes,
+  eliminarImagenes,
 } = require("../controllers/post.controller");
 
 const {
@@ -21,8 +22,8 @@ route.get("/fecha", validarFecha, verDesdeFecha);
 route.get("/", findAll);
 route.get("/:id", validarPostById, findByPk);
 route.post("/", validarUsuario, validarPost, crearPost);
-route.put("/:id", validarPostById, actualizarPost);
+route.post("/:id", validarPostById, agregarImagenes);
+route.post("/:id", validarPostById, eliminarImagenes);
 route.delete("/:id", validarPostById, eliminarPost);
-
 
 module.exports = route;

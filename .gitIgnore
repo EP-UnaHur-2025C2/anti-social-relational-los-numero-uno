@@ -1,4 +1,8 @@
 node_modules/
 init.js/
-
+db/models/comment.js/
+db/models/post_image.js/
+db/models/post_tags.js/
+db/models/tag.js/
+db/models/usuario.js/
 
