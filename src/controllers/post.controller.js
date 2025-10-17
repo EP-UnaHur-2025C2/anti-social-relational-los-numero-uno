@@ -1,226 +1,161 @@
-const { where, Op} = require("sequelize");
-const { Post, Comment, Post_Image, Tag } = require("../db/models");
-
-const findAll = async (_, res) => {
-  const data = await Post.findAll({
-    include: [
-        {
-          model: Comment,
-          as: "Comentarios",
-          attributes: ["texto"],
-        },
-        {
-          model: Post_Image,
-          as: "Imagenes",
-          attributes: ["url"]
-        },
-        {
-          model: Tag,
-          attributes: ["nombre"]
-        }
-      ],
-  });
-  res.status(200).json(data);
-};
-
-const findByPk = async (req, res) => {
-  const id = req.params.id;
-  const data = await Post.findByPk(id,{
-      include: [
-        {
-          model: Comment,
-          as: "Comentarios",
-          attributes: ["texto"],
-        },
-        {
-          model: Post_Image,
-          as: "Imagenes",
-          attributes: ["url"]
-        },
-        {
-          model: Tag,
-          attributes: ["nombre"]
-        }
-      ],
-  });
-  res.status(200).json(data);
-};
-
-const findByPkVisibles = async (req, res) => {
-  const id = req.params.id;
-  const data = await Post.findByPk(id,{
-      include: [
-        {
-          model: Comment,
-          as: "Comentarios",
-          attributes: ["texto"],
-          where: { visible: true }
-        },
-        {
-          model: Post_Image,
-          as: "Imagenes",
-          attributes: ["url"]
-        },
-        {
-          model: Tag,
-          attributes: ["nombre"]
-        }
-      ],
-  });
-  res.status(200).json(data);
-};
-
-const verDesdeFecha = async (req, res) => {
-  const fecha =  req.body.fecha; // '2023-10-01'
-  console.log(fecha);
-  const fechaConvertida = new Date(fecha);
-  const data = await Post.findAll({ 
-    where: { 
-      createdAt: { [Op.gte]: fechaConvertida } 
-    } 
-  });
-  res.status(200).json(data);
-};
+const { Post, Comment, PostImg, Tag, Usuario } = require("../../db/models");
 
 const crearPost = async (req, res) => {
   const data = req.body;
 
-  //Crear el Post
+  // Crear el Post (ajusta campos según tu modelo)
   const post = await Post.create({
-    descripcion: data.descripcion,
     texto: data.texto,
-    UsuarioId: req.Usuario.Id,
   });
 
-  //Crear comentarios
-  const promesasComentarios = [];
-  data.comentarios.forEach((element) => {
-    promesasComentarios.push(
-      Comment.create({
-        texto: element.texto,
+  const promesas = [];
+  const imagenesData = data.imagenes || [];
+  const tagsData = data.tags || [];
+
+  // Asociar imagenes si las hay
+  imagenesData.forEach((imagen) => {
+    promesas.push(
+      PostImg.create({ url: imagen.url }).then((postImage) => {
+        return post.addPostImg(postImage);
       })
     );
   });
-  const comentarios = await Promise.all(promesasComentarios);
-  await post.addComentarios(comentarios);
 
-  //Crear o encontrar tags
-  const promesasTags = [];
-  data.tags.forEach((element) => {
-    promesasTags.push(
+  // Asociar tags si los hay
+  tagsData.forEach((t) => {
+    promesas.push(
       Tag.findOrCreate({
-        where: { nombre: { [Op.eq]: element.nombre } },
-        defaults: element,
+        where: { nombre: t.nombre },
+        defaults: { nombre: t.nombre },
+      }).then((tagInstance) => {
+        const tag = tagInstance[0];
+        return post.addTag(tag);
       })
     );
   });
-  const resultTags = await Promise.all(promesasTags);
-  const tags = resultTags.map(([tag]) => tag);
-  await post.addTags(tags);
 
-  //Crear imágenes
-  const promesasImagenes = [];
-  data.imagenes.forEach((element) => {
-    promesasImagenes.push(
-      Post_Image.create({
-        url: element.url,
-      })
-    );
-  });
-  const imagenes = await Promise.all(promesasImagenes);
-  await post.addImagenes(imagenes);
+  // Esperar a que todas las asociaciones (imágenes + tags) se completen
+  await Promise.all(promesas);
 
-  //Devolver el post con asociaciones
+  const userId = req.params.userId;
+  const usuario = await Usuario.findByPk(userId);
+  await usuario.addPost(post);
+
+  // Devolver el post con sus asociaciones básicas
   res.status(201).json({
     ...post.dataValues,
-    comentarios: await post.getComentarios({ joinTableAttributes: [] }),
+    imagenes: await post.getPostImgs({ joinTableAttributes: [] }),
     tags: await post.getTags({ joinTableAttributes: [] }),
-    imagenes: await post.getImagenes({ joinTableAttributes: [] }),
   });
 };
 
-const agregarImagenes = async (req, res) => {
-  const data = req.body;
-  const post = await Post.findByPk(req.params.id);
-
-  const promesas = [];
-  data.imagenes.forEach((img) => {
-    promesas.push(
-      Post_Image.create({
-        url: img.url,
-        PostId: post.id,
-      })
-    );
-  });
-
-  await Promise.all(promesas);
-
-  const postConImagenes = await Post.findByPk(post.id, {
-    include: { model: Post_Image, as: "Imagenes", attributes: ["id", "url"] },
-  });
-
-  res.status(201).json(postConImagenes);
-};
-
-const eliminarImagenes = async (req, res) => {
-  const data = req.body;
-  const post = await Post.findByPk(req.params.id);
-
-  const promesas = [];
-  data.imagenes.forEach((img) => {
-    promesas.push(Post_Image.destroy({ where: { id: img.id, PostId: post.id } }));
-  });
-
-  await Promise.all(promesas);
-
-  const postSinImagenes = await Post.findByPk(post.id, {
-    include: { model: Post_Image, as: "Imagenes", attributes: ["id", "url"] },
-  });
-
-  res.status(200).json(postSinImagenes);
-};
+const updatePost = async (req, res) => {
+  
+}
 
 const eliminarPost = async (req, res) => {
-  const post = await Post.findByPk(req.params.id, {
+  const id = req.params.postId;
+  await Post.destroy({ where: { id } });
+  res.status(204).send();
+};
+
+const findAll = async (_, res) => {
+  const data = await Post.findAll({
     include: [
-      { model: Comment, as: "Comentarios" },
-      { model: Post_Image, as: "Imagenes" },
-      { model: Tag },
+      {
+        model: Comment,
+        attributes: ["texto"],
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nickName"], 
+          },
+        ],
+      },
+      {
+        model: PostImg,
+        attributes: ["url"],
+      },
+      {
+        model: Tag,
+        attributes: ["nombre"],
+      },
+    ],
+  });
+  
+  const comentarios = data.comments;
+  if (comentarios) {
+    const comentariosVisibles = data.comments.filter((c) => c.visible);
+    data.dataValues.comments = comentariosVisibles;
+  }
+  res.status(200).json(data);
+};
+
+const findByPk = async (req, res) => {
+  const id = req.params.postId;
+  const data = await Post.findByPk(id, {
+    include: [
+      {
+        model: Comment,
+        attributes: ["texto"],
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nickName"], 
+          },
+        ],
+      },
+      {
+        model: PostImg,
+        attributes: ["url"],
+      },
+      {
+        model: Tag,
+        attributes: ["nombre"],
+      },
     ],
   });
 
-  // Promesas para eliminar comentarios
-  const promesasComentarios = [];
-  post.Comentarios.forEach((comentario) => {
-    promesasComentarios.push(Comment.destroy({ where: { id: comentario.id } }));
-  });
+  const comentarios = data.comments;
+  if (comentarios) {
+    const comentariosVisibles = data.comments.filter((c) => c.visible);
+    data.dataValues.comments = comentariosVisibles;
+  }
 
-  // Promesas para eliminar imágenes
-  const promesasImagenes = [];
-  post.Imagenes.forEach((imagen) => {
-    promesasImagenes.push(Post_Image.destroy({ where: { id: imagen.id } }));
-  });
-
-  // Eliminar asociaciones con tags (sin borrar los tags)
-  await post.setTags([]);
-
-  // Ejecutar todas las eliminaciones de imágenes y comentarios
-  await Promise.all([...promesasComentarios, ...promesasImagenes]);
-
-  // Finalmente, eliminar el post
-  await post.destroy();
-
-  res.status(200).json({ message: "Post y elementos asociados eliminados correctamente" });
+  res.status(200).json(data);
 };
 
-module.exports = { 
-  findAll, 
+const findByPkAllComments = async (req, res) => {
+  const id = req.params.postId;
+  const data = await Post.findByPk(id, {
+    include: [
+      {
+        model: Comment,
+        attributes: ["texto"],
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nickName"], 
+          },
+        ],
+      },
+      {
+        model: PostImg,
+        attributes: ["url"],
+      },
+      {
+        model: Tag,
+        attributes: ["nombre"],
+      },
+    ],
+  });
+  res.status(200).json(data);
+};
+
+module.exports = {
+  findAll,
   findByPk,
-  findByPkVisibles,
-  verDesdeFecha,
-  crearPost, 
-  agregarImagenes, 
-  eliminarImagenes, 
-  eliminarPost, 
-   
-  };
+  findByPkAllComments,
+  crearPost,
+  eliminarPost,
+};

@@ -9,8 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Post.belongsTo(models.Usuario, { foreignKey: "UsuarioId" });
-      Post.hasMany(models.Comment, { foreignKey: "PostId" });
-      Post.hasMany(models.PostImg, { foreignKey: "PostId" });
+      Post.hasMany(models.Comment, {
+        foreignKey: "PostId",
+        onDelete: 'CASCADE'
+      });
+      Post.hasMany(models.PostImg, {
+        foreignKey: "PostId",
+        onDelete: 'CASCADE'
+      });
       Post.belongsToMany(models.Tag, {
         through: models.PostTag,
         foreignKey: "PostId",
@@ -25,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Post",
+      timestamps: false
     }
   );
   return Post;

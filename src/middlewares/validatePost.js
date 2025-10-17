@@ -1,15 +1,10 @@
-const { Post, Usuario } = require("../db/models");
+const { Post } = require("../../db/models");
 const {
-  postSchema,
-  dateSchema,
-} = require("../../schemas/postSchema");
-const genericSchemaValidator = require("../../schemas/genericSchemaValidator");
+  postSchema
+} = require("../schemas/postSchema");
+const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 
-const mapErrors = (errores) => {
-  return errores.details.map((e) => {
-    return { atributo: e.path[0], mensaje: e.message };
-  });
-};
+const mapErrors = require("../middlewares/mapErrors");
 
 const validarPost = (req, res, next) => {
   const error = genericSchemaValidator(postSchema, req.body);
@@ -21,31 +16,10 @@ const validarPost = (req, res, next) => {
 };
 
 const validarPostById = async (req, res, next) => {
-  const post = await Post.findByPk(req.params.id);
+  const post = await Post.findByPk(req.params.postId);
   if (!post) {
     res.status(400).json({
-      message: `El post con id ${req.params.id} no existe`,
-    });
-    return;
-  }
-  next();
-};
-
-const validarFecha = (req, res, next) => {
-  const error = genericSchemaValidator(dateSchema, req.body.fecha);
-  if (error) {
-    res.status(400).json(mapErrors(error));
-    return;
-  }
-  next();
-};
-
-const validarUsuario = async (req, res, next) => {
-  const usuarioBuscado = req.Usuario.id;
-  const usuarioEncontrado = await Usuario.findOne({ where: { usuarioBuscado } });
-  if (!usuarioEncontrado) {
-    res.status(400).json({
-      message: `El usuario con id ${usuarioBuscado} no existe`,
+      message: `El post con id ${req.params.postId} no existe`,
     });
     return;
   }
@@ -54,7 +28,5 @@ const validarUsuario = async (req, res, next) => {
 
 module.exports = {
   validarPost,
-  validarPostById,
-  validarFecha,
-  validarUsuario
+  validarPostById
 };
