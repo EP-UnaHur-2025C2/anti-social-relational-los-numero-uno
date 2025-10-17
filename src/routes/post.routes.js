@@ -21,20 +21,18 @@ const route = Router();
  *     Post:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
+ *           description: ID único del post
+ *           example: 24
  *         texto:
  *           type: string
  *           description: Contenido del post
  *           example: "Este es un ejemplo de contenido para un post."
- *         tags:
- *           type: array
- *           description: Lista de etiquetas asociadas al post
- *           items:
- *             type: object
- *             properties:
- *               Nombre:
- *                 type: string
- *                 description: Nombre de la etiqueta
- *                 example: "EtiquetaEjemplo"
+ *         usuarioId:
+ *           type: integer
+ *           description: ID del usuario que creó el post
+ *           example: 5
  *       required:
  *         - texto
  */
@@ -58,26 +56,73 @@ const route = Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Post'
+ *             type: object
+ *             properties:
+ *               texto:
+ *                 type: string
+ *                 description: Contenido del post
+ *                 example: "Este es un ejemplo de contenido para un post."
+ *               Tags:
+ *                 type: array
+ *                 description: Lista de etiquetas asociadas al post
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     Nombre:
+ *                       type: string
+ *                       description: Nombre de la etiqueta
+ *                       example: "EtiquetaEjemplo"
  *     responses:
  *       201:
  *         description: Post creado exitosamente
- *       400:
- *         description: Error de validación
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   atributo:
- *                     type: string
- *                     description: Atributo que causó el error
- *                   mensaje:
- *                     type: string
- *                     description: Descripción del error
- *                     example: "El campo 'texto' es obligatorio."
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID único del post
+ *                   example: 31
+ *                 texto:
+ *                   type: string
+ *                   description: Contenido del post
+ *                   example: "Este es un ejemplo de contenido para un post."
+ *                 PostImgs:
+ *                   type: array
+ *                   description: Lista de imágenes asociadas al post
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       url:
+ *                         type: string
+ *                         description: URL de la imagen
+ *                         example: "https://example.com/image.jpg"
+ *                 Tags:
+ *                   type: array
+ *                   description: Lista de etiquetas asociadas al post
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID único de la etiqueta
+ *                         example: 3
+ *                       Nombre:
+ *                         type: string
+ *                         description: Nombre de la etiqueta
+ *                         example: "EtiquetaEjemplo"
+ *           example:
+ *             id: 31
+ *             texto: "Este es un ejemplo de contenido para un post."
+ *             PostImgs:
+ *               - url: "https://example.com/image1.jpg"
+ *               - url: "https://example.com/image2.jpg"
+ *             Tags:
+ *               - id: 3
+ *                 Nombre: "EtiquetaEjemplo"
+ *               - id: 4
+ *                 Nombre: "Etiqueta2"
  */
 route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost);
 
@@ -100,29 +145,82 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Post'
+ *             type: object
+ *             properties:
+ *               texto:
+ *                 type: string
+ *                 description: Contenido del post
+ *                 example: "Nuevo contenido del post"
  *           example:
  *             texto: "Nuevo contenido del post"
  *     responses:
  *       200:
  *         description: Post modificado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID único del post
+ *                   example: 31
+ *                 texto:
+ *                   type: string
+ *                   description: Contenido del post
+ *                   example: "Nuevo contenido del post"
+ *                 PostImgs:
+ *                   type: array
+ *                   description: Lista de imágenes asociadas al post
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       url:
+ *                         type: string
+ *                         description: URL de la imagen
+ *                         example: "https://example.com/image.jpg"
+ *                 Tags:
+ *                   type: array
+ *                   description: Lista de etiquetas asociadas al post
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: ID único de la etiqueta
+ *                         example: 3
+ *                       Nombre:
+ *                         type: string
+ *                         description: Nombre de la etiqueta
+ *                         example: "EtiquetaEjemplo"
+ *           example:
+ *             id: 31
+ *             texto: "Nuevo contenido del post"
+ *             PostImgs:
+ *               - url: "https://example.com/image1.jpg"
+ *               - url: "https://example.com/image2.jpg"
+ *             Tags:
+ *               - id: 3
+ *                 Nombre: "EtiquetaEjemplo"
+ *               - id: 4
+ *                 Nombre: "Etiqueta2"
  *       400:
  *         description: Error de validación
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   atributo:
- *                     type: string
- *                     description: Atributo que causó el error
- *                   mensaje:
- *                     type: string
- *                     description: Descripción del error
- *                     example: "El campo 'texto' no puede estar vacío."
- *     description: Solo se permite modificar el campo 'texto'. No se pueden modificar imágenes ni etiquetas (tags).
+ *               type: object
+ *               properties:
+ *                 atributo:
+ *                   type: string
+ *                   description: Atributo que causó el error
+ *                 mensaje:
+ *                   type: string
+ *                   description: Descripción del error
+ *               example:
+ *                 atributo: "texto"
+ *                 mensaje: "El campo 'texto' no puede estar vacío."
+ *     description: Solo se permite modificar el campo 'texto'. No se pueden enviar etiquetas ni imágenes.
  */
 route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
 
@@ -167,22 +265,28 @@ route.delete("/delete-post/:postId", validarPostById, eliminarPostById);
  *     responses:
  *       200:
  *         description: Lista de posts
- *       400:
- *         description: Error de validación
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   atributo:
- *                     type: string
- *                     description: Atributo que causó el error
- *                   mensaje:
- *                     type: string
- *                     description: Descripción del error
- *                     example: "Error al procesar la solicitud."
+ *                 $ref: '#/components/schemas/Post'
+ *             example:
+ *               - id: 31
+ *                 texto: "Este es un ejemplo de contenido para un post."
+ *                 usuarioId: 5
+ *                 PostImgs:
+ *                   - url: "https://example.com/image2.jpg"
+ *                 Tags:
+ *                   - id: 3
+ *                     Nombre: "EtiquetaEjemplo"
+ *                 Comments: []
+ *               - id: 32
+ *                 texto: "Otro ejemplo de contenido para un post."
+ *                 usuarioId: 6
+ *                 PostImgs: []
+ *                 Tags: []
+ *                 Comments: []
  */
 route.get("/", findAll);
 
@@ -203,24 +307,29 @@ route.get("/", findAll);
  *     responses:
  *       200:
  *         description: Detalle de un post
- *       400:
- *         description: Error de validación
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   atributo:
- *                     type: string
- *                     description: Atributo que causó el error
- *                   mensaje:
- *                     type: string
- *                     description: Descripción del error
- *                     example: "El ID del post debe ser un número válido."
- *       404:
+ *               $ref: '#/components/schemas/Post'
+ *             example:
+ *               id: 31
+ *               texto: "Este es un ejemplo de contenido para un post."
+ *               usuarioId: 5
+ *               PostImgs:
+ *                 - url: "https://example.com/image2.jpg"
+ *               Tags:
+ *                 - id: 3
+ *                   Nombre: "EtiquetaEjemplo"
+ *               Comments: []
+ *       400:
  *         description: Post no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
  */
 route.get("/:postId", validarPostById, findByPk);
 
@@ -241,24 +350,32 @@ route.get("/:postId", validarPostById, findByPk);
  *     responses:
  *       200:
  *         description: Detalle de un post con todos los comentarios
- *       400:
- *         description: Error de validación
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   atributo:
- *                     type: string
- *                     description: Atributo que causó el error
- *                   mensaje:
- *                     type: string
- *                     description: Descripción del error
- *                     example: "El ID del post no es válido."
- *       404:
+ *               $ref: '#/components/schemas/Post'
+ *             example:
+ *               id: 31
+ *               texto: "Este es un ejemplo de contenido para un post."
+ *               usuarioId: 5
+ *               PostImgs:
+ *                 - url: "https://example.com/image2.jpg"
+ *               Tags:
+ *                 - id: 3
+ *                   Nombre: "EtiquetaEjemplo"
+ *               Comments:
+ *                 - id: 10
+ *                   texto: "Comentario de ejemplo"
+ *                   usuarioId: 2
+ *       400:
  *         description: Post no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
  */
 route.get("/:postId/all-comments", validarPostById, findByPkAllComments);
 

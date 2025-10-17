@@ -13,8 +13,8 @@ const crearPost = async (req, res) => {
   await usuario.addPost(post);
 
   const promesas = [];
-  const imagenesData = data.imagenes || [];
-  const tagsData = data.tags || [];
+  const imagenesData = data.PostImgs || [];
+  const tagsData = data.Tags || [];
 
   // Asociar imagenes si las hay
   imagenesData.forEach((imagen) => {
@@ -44,8 +44,8 @@ const crearPost = async (req, res) => {
   // Devolver el post con sus asociaciones básicas
   res.status(201).json({
     ...post.dataValues,
-    imagenes: await post.getPostImgs({ joinTableAttributes: [] }),
-    tags: await post.getTags({ joinTableAttributes: [] }),
+    PostImgs: await post.getPostImgs({ joinTableAttributes: [] }),
+    Tags: await post.getTags({ joinTableAttributes: [] }),
   });
 };
 
@@ -59,7 +59,11 @@ const updatePostById = async (req, res) => {
     { where: { id } }
   );
   const updatedPost = await Post.findByPk(id);
-  res.status(200).json(updatedPost);
+  res.status(200).json({
+    ...updatedPost.dataValues,
+    PostImgs: await updatedPost.getPostImgs({ joinTableAttributes: [] }),
+    Tags: await updatedPost.getTags({ joinTableAttributes: [] }),
+  });
 };
 
 const eliminarPostById = async (req, res) => {
