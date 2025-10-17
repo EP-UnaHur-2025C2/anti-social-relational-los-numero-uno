@@ -15,8 +15,8 @@ const nickName = Joi.string()
 const mail = Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .messages({
-        "string.email": 'email debe estar compuesto por un mínimo de dos dominios. Ej: loreipsum@outlook.com',
-        "string.empty": 'email no puede estar vacío'
+        "string.email": 'mail debe estar compuesto por un mínimo de dos dominios. Ej: loreipsum@outlook.com',
+        "string.empty": 'mail no puede estar vacío'
     });
 
 const userSchema = Joi.object({
@@ -24,7 +24,7 @@ const userSchema = Joi.object({
         "any.required": 'nickname es obligatorio'
     }),
     mail: mail.required().messages({
-        "any.required": 'email es obligatorio'
+        "any.required": 'mail es obligatorio'
     })
 });
 

@@ -1,4 +1,4 @@
-const {tagSchema, updateTagSchema} = require('../schemas/tagSchema');
+const {tagSchema} = require('../schemas/tagSchema');
 const genericSchemaValidator = require('../schemas/genericSchemaValidator');
 const mapErrors = require('./mapErrors');
 const { Tag } = require('../../db/models');
