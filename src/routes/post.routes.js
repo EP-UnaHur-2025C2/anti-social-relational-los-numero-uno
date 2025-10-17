@@ -3,7 +3,8 @@ const {
   findAll,
   findByPk,
   crearPost,
-  eliminarPost,
+  eliminarPostById,
+  updatePostById,
   findByPkAllComments
 } = require("../controllers/post.controller");
 
@@ -24,11 +25,21 @@ const route = Router();
  *           type: string
  *           description: Contenido del post
  *           example: "Este es un ejemplo de contenido para un post."
+ *         tags:
+ *           type: array
+ *           description: Lista de etiquetas asociadas al post
+ *           items:
+ *             type: object
+ *             properties:
+ *               Nombre:
+ *                 type: string
+ *                 description: Nombre de la etiqueta
+ *                 example: "EtiquetaEjemplo"
  *       required:
  *         - texto
  */
 
-//1. Crear un post
+//1. Crear un post VERIFICADO
 /**
  * @swagger
  * /posts/create-post/user/{userId}:
@@ -53,10 +64,24 @@ const route = Router();
  *         description: Post creado exitosamente
  *       400:
  *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   atributo:
+ *                     type: string
+ *                     description: Atributo que causó el error
+ *                   mensaje:
+ *                     type: string
+ *                     description: Descripción del error
+ *                     example: "El campo 'texto' es obligatorio."
  */
 route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost);
 
-//2. Modificar un post
+//2. Modificar un post VERIFICADO
 /**
  * @swagger
  * /posts/modify-post/{postId}:
@@ -76,15 +101,32 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Post'
+ *           example:
+ *             texto: "Nuevo contenido del post"
  *     responses:
  *       200:
  *         description: Post modificado exitosamente
- *       404:
- *         description: Post no encontrado
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   atributo:
+ *                     type: string
+ *                     description: Atributo que causó el error
+ *                   mensaje:
+ *                     type: string
+ *                     description: Descripción del error
+ *                     example: "El campo 'texto' no puede estar vacío."
+ *     description: Solo se permite modificar el campo 'texto'. No se pueden modificar imágenes ni etiquetas (tags).
  */
-route.put("/modify-post/:postId", validarPostById);
+route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
 
-//3. eliminar un post
+//3. eliminar un post VERIFICADO
 /**
  * @swagger
  * /posts/delete-post/{postId}:
@@ -101,10 +143,19 @@ route.put("/modify-post/:postId", validarPostById);
  *     responses:
  *       204:
  *         description: Post eliminado exitosamente
- *       404:
- *         description: Post no encontrado
+ *       400:
+ *         description: Error de validación o post no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
+ *                   description: Descripción del error
+ *                   example: "El post con id 4 no existe."
  */
-route.delete("/delete-post/:postId", validarPostById, eliminarPost);
+route.delete("/delete-post/:postId", validarPostById, eliminarPostById);
 
 //4. Obtener todos los posts VERIFICADO
 /**
@@ -116,6 +167,22 @@ route.delete("/delete-post/:postId", validarPostById, eliminarPost);
  *     responses:
  *       200:
  *         description: Lista de posts
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   atributo:
+ *                     type: string
+ *                     description: Atributo que causó el error
+ *                   mensaje:
+ *                     type: string
+ *                     description: Descripción del error
+ *                     example: "Error al procesar la solicitud."
  */
 route.get("/", findAll);
 
@@ -136,6 +203,22 @@ route.get("/", findAll);
  *     responses:
  *       200:
  *         description: Detalle de un post
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   atributo:
+ *                     type: string
+ *                     description: Atributo que causó el error
+ *                   mensaje:
+ *                     type: string
+ *                     description: Descripción del error
+ *                     example: "El ID del post debe ser un número válido."
  *       404:
  *         description: Post no encontrado
  */
@@ -158,6 +241,22 @@ route.get("/:postId", validarPostById, findByPk);
  *     responses:
  *       200:
  *         description: Detalle de un post con todos los comentarios
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   atributo:
+ *                     type: string
+ *                     description: Atributo que causó el error
+ *                   mensaje:
+ *                     type: string
+ *                     description: Descripción del error
+ *                     example: "El ID del post no es válido."
  *       404:
  *         description: Post no encontrado
  */
