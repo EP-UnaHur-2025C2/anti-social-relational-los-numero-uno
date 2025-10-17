@@ -5,7 +5,7 @@ const {
   createUser,
   actualizarUser,
   eliminarUser,
-} = require("../controllers/usuarioController.js");
+} = require("../controllers/usuario.controller.js");
 
 const {
   validarUser,

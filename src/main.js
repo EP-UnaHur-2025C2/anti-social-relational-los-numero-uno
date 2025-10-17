@@ -1,10 +1,10 @@
 const express = require("express");
 const app = express();
 const db = require("../db/models");
-const tagRoutes = require('./routes/tagRoutes'); 
-const postTagRoutes = require('./routes/postTagRoutes');
-const routerComment = require("./routes/commentRoutes");
-const usuarioRoutes = require('./routes/usuarioRoutes');
+const tagRoutes = require('./routes/tag.routes'); 
+const postTagRoutes = require('./routes/postTag.routes');
+const routerComment = require("./routes/comment.routes");
+const usuarioRoutes = require('./routes/usuario.routes');
 const PORT = process.env.PORT || 3000;
 const swaggerUI = require('swagger-ui-express');
 const specs = require('../swagger/swagger');

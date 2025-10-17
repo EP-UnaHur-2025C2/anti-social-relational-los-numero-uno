@@ -1,5 +1,5 @@
 const express = require('express');
-const postTagController = require('../controllers/postTagController');
+const postTagController = require('../controllers/postTag.controller');
 const { validatePostTagAssociation } = require('../middlewares/validatePostTag');
 const router = express.Router();
 
