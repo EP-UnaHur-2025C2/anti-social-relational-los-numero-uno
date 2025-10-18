@@ -4,8 +4,11 @@ const {
   validarCreateCommentSchema,
   validarCommentById,
   validarUpdateCommentSchema,
-  validarDate
+  validarDate,
 } = require("../middlewares/validateComment");
+const { validarUserById } = require("../middlewares/validateUsuario");
+const { validarPostById } = require("../middlewares/validatePost");
+const { route } = require("./post.routes");
 
 const router = Router();
 
@@ -36,18 +39,18 @@ const router = Router();
  *           type: integer
  *           description: El ID del post al que pertenece el comentario
  *           example: 67
- *         fecha:
+ *         createdAt:
  *           type: string
  *           format: dateonly
  *           description: Fecha de creación del comentario
- *           example: "2024-06-01"
+ *           example: "2025-10-17"
  *         visible:
  *           type: boolean
  *           description: Si el comentario es visible
  *           example: true
  */
 
-// 1. Crear un comentario en un post
+//1. Crear un comentario en un post VERIFICADO
 /**
  * @swagger
  * /comments/create-comment/post/{postId}/user/{userId}:
@@ -82,11 +85,23 @@ const router = Router();
  *                 example: "Me gusta este post"
  *     responses:
  *       201:
- *         description: Comentario creado exitosamente
+ *         description: Comentario creado (ejemplo)
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Comment'
+ *             example:
+ *               id: 8
+ *               texto: "Me gusta este post"
+ *               createdAt: "2025-10-17"
+ *               usuario:
+ *                 id: 1
+ *                 nickName: "lautaro123"
+ *                 mail: "lautaro@gmail.com"
+ *               post:
+ *                 id: 23
+ *                 texto: "Este es un ejemplo de contenido para un post."
+ *                 UsuarioId: 1
  *       400:
  *         description: Error de validación
  *         content:
@@ -109,18 +124,29 @@ const router = Router();
  *                   errors:
  *                     - atributo: "texto"
  *                       mensaje: "El texto es obligatorio"
+ *       404:
+ *         description: Post o usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El post con id 23 no existe"
  */
 router.post(
   "/create-comment/post/:postId/user/:userId",
-  /*
   validarUserById,
   validarPostById,
-  */
   validarCreateCommentSchema,
   commentController.addCommentInPost
 );
 
-// 2. Modificar un comentario de un post
+// 2. Modificar un comentario de un post VERIFICADO
 /**
  * @swagger
  * /comments/modify-comment/{commentId}:
@@ -146,18 +172,33 @@ router.post(
  *                 type: string
  *                 description: El nuevo texto del comentario
  *                 example: "Comentario editado"
- *               fecha:
+ *               createdAt:
  *                 type: string
  *                 format: dateonly
  *                 description: La nueva fecha del comentario
  *                 example: "2024-06-10"
  *     responses:
  *       200:
- *         description: Comentario modificado exitosamente
+ *         description: Comentario modificado exitosamente (solo id, texto y createdAt)
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Comment'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 8
+ *                 texto:
+ *                   type: string
+ *                   example: "Comentario editado"
+ *                 createdAt:
+ *                   type: string
+ *                   format: dateonly
+ *                   example: "2025-10-17"
+ *             example:
+ *               id: 8
+ *               texto: "Comentario editado"
+ *               createdAt: "2025-10-17"
  *       400:
  *         description: Error de validación
  *         content:
@@ -180,7 +221,7 @@ router.post(
  *                   errors:
  *                     - atributo: "texto"
  *                       mensaje: "El texto no puede estar vacío"
- *                     - atributo: "fecha"
+ *                     - atributo: "createdAt"
  *                       mensaje: "La fecha no es válida"
  *       404:
  *         description: Comentario no encontrado
@@ -198,15 +239,12 @@ router.post(
  */
 router.put(
   "/modify-comment/:commentId",
-  /*
-  validarIdParams,
-  */
   validarCommentById,
   validarUpdateCommentSchema,
   commentController.changeCommentInPost
 );
 
-// 3. Eliminar un comentario de un post
+// 3. Eliminar un comentario de un post VERIFICADO
 /**
  * @swagger
  * /comments/delete-comment/{commentId}:
@@ -243,7 +281,7 @@ router.delete(
   commentController.deleteCommentInPost
 );
 
-// 4. Obtener todos los comentarios
+// 4. Obtener todos los comentarios VERIFICADO
 /**
  * @swagger
  * /comments/:
@@ -258,25 +296,44 @@ router.delete(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Comment'
- *             examples:
- *               comentarios:
- *                 value:
- *                   - id: 1
- *                     texto: "Comentario ejemplo"
- *                     userId: 45
- *                     postId: 67
- *                     fecha: "2024-06-01"
- *                     visible: true
- *                   - id: 2
- *                     texto: "Otro comentario"
- *                     userId: 46
- *                     postId: 67
- *                     fecha: "2024-06-02"
- *                     visible: false
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 8
+ *                   texto:
+ *                     type: string
+ *                     example: "Me gusta este post"
+ *                   userId:
+ *                     type: integer
+ *                     example: 1
+ *                   postId:
+ *                     type: integer
+ *                     example: 23
+ *                   createdAt:
+ *                     type: string
+ *                     format: dateonly
+ *                     example: "2025-10-17"
+ *                   visible:
+ *                     type: boolean
+ *                     example: true
+ *             example:
+ *               - id: 8
+ *                 texto: "Me gusta este post"
+ *                 userId: 1
+ *                 postId: 23
+ *                 createdAt: "2025-10-17"
+ *                 visible: true
+ *               - id: 9
+ *                 texto: "Otro comentario de ejemplo"
+ *                 userId: 2
+ *                 postId: 23
+ *                 createdAt: "2025-10-16"
+ *                 visible: false
  */
 router.get("/", commentController.getComments);
 
+//5. Obtener todos los comentarios visibles VERIFICADO
 /**
  * @swagger
  * /comments/visibles:
@@ -313,6 +370,7 @@ router.get("/", commentController.getComments);
  */
 router.get("/visibles", commentController.getVisibleComments);
 
+// 6. Obtener un comentarios en una fecha especifica VERIFICADO
 /**
  * @swagger
  * /comments/especific-date/{createdAt}:
@@ -336,16 +394,40 @@ router.get("/visibles", commentController.getVisibleComments);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Comment'
- *             examples:
- *               comentariosFecha:
- *                 value:
- *                   - id: 1
- *                     texto: "Comentario en fecha"
- *                     userId: 45
- *                     postId: 67
- *                     fecha: "2024-06-01"
- *                     visible: true
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 8
+ *                   texto:
+ *                     type: string
+ *                     example: "Me gusta este post"
+ *                   userId:
+ *                     type: integer
+ *                     example: 1
+ *                   postId:
+ *                     type: integer
+ *                     example: 23
+ *                   createdAt:
+ *                     type: string
+ *                     format: dateonly
+ *                     example: "2025-10-17"
+ *                   visible:
+ *                     type: boolean
+ *                     example: true
+ *             example:
+ *               - id: 8
+ *                 texto: "Me gusta este post"
+ *                 userId: 1
+ *                 postId: 23
+ *                 createdAt: "2025-10-17"
+ *                 visible: true
+ *               - id: 9
+ *                 texto: "Otro comentario de ejemplo"
+ *                 userId: 2
+ *                 postId: 23
+ *                 createdAt: "2025-10-16"
+ *                 visible: false
  */
 router.get(
   "/especific-date/:createdAt",
@@ -353,6 +435,7 @@ router.get(
   commentController.getCommentsInDate
 );
 
+//7. Obtener un comentario específico VERIFICADO
 /**
  * @swagger
  * /comments/{commentId}:
@@ -372,16 +455,34 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Comment'
- *             examples:
- *               comentario:
- *                 value:
- *                   id: 1
- *                   texto: "Comentario ejemplo"
- *                   userId: 45
- *                   postId: 67
- *                   fecha: "2024-06-01"
- *                   visible: true
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 8
+ *                 texto:
+ *                   type: string
+ *                   example: "Me gusta este post"
+ *                 userId:
+ *                   type: integer
+ *                   example: 1
+ *                 postId:
+ *                   type: integer
+ *                   example: 23
+ *                 createdAt:
+ *                   type: string
+ *                   format: dateonly
+ *                   example: "2025-10-17"
+ *                 visible:
+ *                   type: boolean
+ *                   example: true
+ *             example:
+ *               id: 8
+ *               texto: "Me gusta este post"
+ *               userId: 1
+ *               postId: 23
+ *               createdAt: "2025-10-17"
+ *               visible: true
  *       404:
  *         description: Comentario no encontrado
  *         content:
@@ -397,11 +498,12 @@ router.get(
  *                   message: "El comentario con id 123 no existe"
  */
 router.get(
-  "/:commentId", 
-  validarCommentById, 
+  "/:commentId",
+  validarCommentById,
   commentController.getCommentById
 );
 
+//8. Obtener todos los comentarios de un post VERIFICADO
 /**
  * @swagger
  * /comments/post/{postId}:
@@ -423,16 +525,40 @@ router.get(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Comment'
- *             examples:
- *               comentariosPost:
- *                 value:
- *                   - id: 1
- *                     texto: "Comentario en post"
- *                     userId: 45
- *                     postId: 67
- *                     fecha: "2024-06-01"
- *                     visible: true
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 8
+ *                   texto:
+ *                     type: string
+ *                     example: "Me gusta este post"
+ *                   userId:
+ *                     type: integer
+ *                     example: 1
+ *                   postId:
+ *                     type: integer
+ *                     example: 23
+ *                   createdAt:
+ *                     type: string
+ *                     format: dateonly
+ *                     example: "2025-10-17"
+ *                   visible:
+ *                     type: boolean
+ *                     example: true
+ *             example:
+ *               - id: 8
+ *                 texto: "Me gusta este post"
+ *                 userId: 1
+ *                 postId: 23
+ *                 createdAt: "2025-10-17"
+ *                 visible: true
+ *               - id: 9
+ *                 texto: "Otro comentario de ejemplo"
+ *                 userId: 2
+ *                 postId: 23
+ *                 createdAt: "2025-10-16"
+ *                 visible: false
  *       404:
  *         description: Post no encontrado
  *         content:
@@ -443,16 +569,15 @@ router.get(
  *                 message:
  *                   type: string
  *             examples:
- *               errorId:
+ *               errorPost:
  *                 value:
- *                   message: "El post con id 123 no existe"
+ *                   message: "El post con id 23 no existe"
  */
 router.get(
   "/post/:postId",
-  /*validarPostById,*/ 
+  validarPostById,
   commentController.getCommentsInPostById
 );
-
 /**
  * @swagger
  * /comments/user/{userId}:
@@ -474,16 +599,40 @@ router.get(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Comment'
- *             examples:
- *               comentariosUsuario:
- *                 value:
- *                   - id: 1
- *                     texto: "Comentario de usuario"
- *                     userId: 45
- *                     postId: 67
- *                     fecha: "2024-06-01"
- *                     visible: true
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 8
+ *                   texto:
+ *                     type: string
+ *                     example: "Me gusta este post"
+ *                   userId:
+ *                     type: integer
+ *                     example: 1
+ *                   postId:
+ *                     type: integer
+ *                     example: 23
+ *                   createdAt:
+ *                     type: string
+ *                     format: dateonly
+ *                     example: "2025-10-17"
+ *                   visible:
+ *                     type: boolean
+ *                     example: true
+ *             example:
+ *               - id: 8
+ *                 texto: "Me gusta este post"
+ *                 userId: 1
+ *                 postId: 23
+ *                 createdAt: "2025-10-17"
+ *                 visible: true
+ *               - id: 9
+ *                 texto: "Otro comentario de ejemplo"
+ *                 userId: 2
+ *                 postId: 24
+ *                 createdAt: "2025-10-16"
+ *                 visible: false
  *       404:
  *         description: Usuario no encontrado
  *         content:
@@ -494,16 +643,15 @@ router.get(
  *                 message:
  *                   type: string
  *             examples:
- *               errorId:
+ *               errorUsuario:
  *                 value:
- *                   message: "El usuario con id 123 no existe"
+ *                   message: "El usuario con id 1 no existe"
  */
 router.get(
   "/user/:userId",
-  /*validarUserById,*/ 
+  validarUserById,
   commentController.getUserCommentsById
 );
-
 /**
  * @swagger
  * /comments/post/{postId}/user/{userId}:
@@ -531,16 +679,48 @@ router.get(
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Comment'
+ *                 type: object
+ *                 properties:
+ *                   visible:
+ *                     type: boolean
+ *                     example: true
+ *                   id:
+ *                     type: integer
+ *                     example: 5
+ *                   texto:
+ *                     type: string
+ *                     example: "Me gusta este post"
+ *                   createdAt:
+ *                     type: string
+ *                     format: dateonly
+ *                     example: "2025-10-17"
+ *                   UsuarioId:
+ *                     type: integer
+ *                     example: 1
+ *                   PostId:
+ *                     type: integer
+ *                     example: 24
  *             examples:
  *               comentariosUsuarioPost:
  *                 value:
- *                   - id: 1
- *                     texto: "Comentario de usuario en post"
- *                     userId: 45
- *                     postId: 67
- *                     fecha: "2024-06-01"
- *                     visible: true
+ *                   - visible: false
+ *                     id: 4
+ *                     texto: "Comentario editado"
+ *                     createdAt: "2024-06-10"
+ *                     UsuarioId: 1
+ *                     PostId: 24
+ *                   - visible: true
+ *                     id: 5
+ *                     texto: "Me gusta este post"
+ *                     createdAt: "2025-10-17"
+ *                     UsuarioId: 1
+ *                     PostId: 24
+ *                   - visible: true
+ *                     id: 6
+ *                     texto: "Me gusta este post"
+ *                     createdAt: "2025-10-17"
+ *                     UsuarioId: 1
+ *                     PostId: 24
  *       404:
  *         description: Post o usuario no encontrado
  *         content:
@@ -551,19 +731,16 @@ router.get(
  *                 message:
  *                   type: string
  *             examples:
- *               errorId:
+ *               errorPostUsuario:
  *                 value:
- *                   message: "El post con id 123 no existe"
+ *                   message: "El post con id 24 no existe"
  */
 router.get(
   "/post/:postId/user/:userId",
-  /*
   validarPostById,
   validarUserById,
-  */ 
   commentController.getUserCommentsInPostById
 );
-
 /**
  * @swagger
  * /comments/post/{postId}/count:
@@ -585,19 +762,30 @@ router.get(
  *             schema:
  *               type: object
  *               properties:
- *                 count:
+ *                 cantidadComentarios:
  *                   type: integer
  *                   description: Número de comentarios
  *             examples:
  *               cantidadComentarios:
  *                 value:
- *                   count: 2
+ *                   cantidadComentarios: 2
+ *       404:
+ *         description: Post no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorPostCount:
+ *                 value:
+ *                   message: "El post con id 24 no existe"
  */
 router.get(
-  "/post/:postId",
-  /*
+  "/post/:postId/count",
   validarPostById,
-  */ 
   commentController.getAmountCommentsInPostById
 );
 

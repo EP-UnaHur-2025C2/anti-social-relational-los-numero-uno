@@ -1,37 +1,36 @@
 const { Comment } = require("../../db/models");
 const { Post } = require("../../db/models");
 const { Usuario } = require("../../db/models");
-
+const { Op } = require("sequelize");
 const addCommentInPost = async (req, res) => {
-  /*
-  const { postId } = req.params;
-  const { texto, userId } = req.body;
-  */
+  const { postId, userId } = req.params;
   const { texto } = req.body;
 
   const comment = await Comment.create({
     texto,
-    createdAt: new Date().toISOString().slice(0, 10) // convierte la fecha a formato ISO YYYY-MM-DD
+    createdAt: new Date().toISOString().slice(0, 10), // convierte la fecha a formato ISO YYYY-MM-DD
   });
 
-  /*
   const promesas = []; //Busco post y user para asociar el comentario y luego lo asocio
   promesas.push(Post.findByPk(postId).then((post) => post.addComment(comment)));
-  promesas.push(User.findByPk(userId).then((user) => user.addComment(comment)));
+  promesas.push(
+    Usuario.findByPk(userId).then((user) => user.addComment(comment))
+  );
   await Promise.all(promesas);
   res.status(201).json({
-      ...comment.dataValues,
-      user: await User.findByPk(userId),
-      post: await Post.findByPk(postId),
-    });
-*/
-  res.status(201).json(comment);
+    ...comment.dataValues,
+    usuario: await Usuario.findByPk(userId),
+    post: await Post.findByPk(postId)
+  });
 };
 
 const changeCommentInPost = async (req, res) => {
   const { commentId } = req.params;
   const { texto, createdAt } = req.body;
-  await Comment.update({ texto: texto, createdAt: createdAt}, { where: { id: commentId } });
+  await Comment.update(
+    { texto: texto, createdAt: createdAt },
+    { where: { id: commentId } }
+  );
   const comment = await Comment.findByPk(commentId, {
     attributes: ["id", "texto", "createdAt"],
   });
@@ -50,7 +49,9 @@ const getComments = async (_, res) => {
 };
 
 const getVisibleComments = async (_, res) => {
-  const comments = await Comment.findAll({ attributes: ["id", "texto", "createdAt"] });
+  const comments = await Comment.findAll({
+    attributes: ["id", "texto", "createdAt"],
+  });
   const visibles = comments.filter((c) => c.visible);
   res.status(200).json(visibles);
 };
@@ -59,41 +60,45 @@ const getCommentById = async (req, res) => {
   const { commentId } = req.params;
   const comment = await Comment.findByPk(commentId, {});
   res.status(200).json(comment);
-}
+};
 
 const getCommentsInPostById = async (req, res) => {
   const { postId } = req.params;
   const post = await Post.findByPk(postId);
   const comments = await post.getComments();
   res.status(200).json(comments);
-}
+};
 
 const getUserCommentsById = async (req, res) => {
   const { userId } = req.params;
-  const user = await User.findByPk(userId);
+  const user = await Usuario.findByPk(userId);
   const comments = await user.getComments();
   res.status(200).json(comments);
-}
+};
 
 const getUserCommentsInPostById = async (req, res) => {
   const { postId, userId } = req.params;
   const post = await Post.findByPk(postId);
-  const comments = await post.getComments({ where: { userId: userId } });
+  const comments = await post.getComments({
+    where: {
+      usuarioId: { [Op.eq]: userId } 
+    }
+  });
   res.status(200).json(comments);
-}
+};
 
 const getCommentsInDate = async (req, res) => {
   const { createdAt } = req.params;
   const comments = await Comment.findAll({ where: { createdAt: createdAt } });
   res.status(200).json(comments);
-}
+};
 
 const getAmountCommentsInPostById = async (req, res) => {
   const { postId } = req.params;
   const post = await Post.findByPk(postId);
   const comments = await post.getComments();
   res.status(200).json({ cantidadComentarios: comments.length });
-}
+};
 
 module.exports = {
   addCommentInPost,
@@ -106,5 +111,5 @@ module.exports = {
   getUserCommentsById,
   getUserCommentsInPostById,
   getCommentsInDate,
-  getAmountCommentsInPostById
+  getAmountCommentsInPostById,
 };
