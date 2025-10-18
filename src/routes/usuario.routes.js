@@ -198,7 +198,7 @@ route.put(
  *     responses:
  *       204:
  *         description: Usuario eliminado correctamente
- *       400:
+ *       404:
  *         description: Error de validación
  *         content:
  *           application/json:

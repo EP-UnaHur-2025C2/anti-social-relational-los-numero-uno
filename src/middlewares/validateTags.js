@@ -40,7 +40,7 @@ const validarNombreTag = async (req, res, next) => {
 const validarTagByid = async (req, res, next) => {
     const tag = await Tag.findByPk(req.params.tagId);
     if (!tag) {
-        res.status(400).json({
+        res.status(404).json({
             message: `La tag con id ${req.params.tagId} no existe`,
         });
         return;

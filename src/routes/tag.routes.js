@@ -141,6 +141,19 @@ router.post("/create-tag", validarTag, validarNombreTag, tagController.createTag
  *                   errors:
  *                     - atributo: "Nombre"
  *                       mensaje: "El nombre es obligatorio"
+ *       404:
+ *         description: Etiqueta no encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "La etiqueta con id 1 no existe"
  */
 router.put(
   "/modify-tag/:tagId",
@@ -167,7 +180,7 @@ router.put(
  *     responses:
  *       204:
  *         description: Etiqueta eliminada correctamente
- *       400:
+ *       404:
  *         description: Etiqueta no encontrada
  *         content:
  *           application/json:
@@ -209,6 +222,7 @@ router.delete("/delete-tag/:tagId", validarTagByid, tagController.deleteTag);
  */
 router.get("/", tagController.getAllTags);
 
+// 5. Obtener una etiqueta por su ID VERIFICADO
 /**
  * @swagger
  * /tags/{tagId}:
@@ -234,7 +248,7 @@ router.get("/", tagController.getAllTags);
  *                 value:
  *                   id: 1
  *                   Nombre: "javascript"
- *       400:
+ *       404:
  *         description: Etiqueta no encontrada
  *         content:
  *           application/json:
