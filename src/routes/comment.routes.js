@@ -578,6 +578,8 @@ router.get(
   validarPostById,
   commentController.getCommentsInPostById
 );
+
+//9. Obtener todos los comentarios de un usuario VERIFICADO
 /**
  * @swagger
  * /comments/user/{userId}:
@@ -652,6 +654,8 @@ router.get(
   validarUserById,
   commentController.getUserCommentsById
 );
+
+//10. Obtener todos los comentarios de un usuario en un post específico VERIFICADO
 /**
  * @swagger
  * /comments/post/{postId}/user/{userId}:
@@ -741,6 +745,8 @@ router.get(
   validarUserById,
   commentController.getUserCommentsInPostById
 );
+
+//11. Obtener la cantidad de comentarios de un post VERIFICADO
 /**
  * @swagger
  * /comments/post/{postId}/count:
