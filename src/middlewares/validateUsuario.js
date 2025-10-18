@@ -19,7 +19,7 @@ const validarUser = (req, res, next) => {
 const validarUserById = async (req, res, next) => {
   const user = await Usuario.findByPk(req.params.userId);
   if (!user) {
-    res.status(400).json({
+    res.status(404).json({
       message: `El user con id ${req.params.userId} no existe`,
     });
     return;

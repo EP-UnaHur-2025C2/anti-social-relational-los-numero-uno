@@ -5,11 +5,11 @@ const nickName = Joi.string()
     .min(3)
     .max(30)
     .messages({
-        "string.min": 'nickname debe tener al menos 3 caracteres',
-        "string.max": 'nickname debe tener como máximo 30 caracteres',
-        "string.base": 'nickname debe ser un texto',
-        "string.alphanum": 'nickname debe estar compuesto únicamente por caracteres alfanuméricos',
-        "string.empty": 'nickname no puede estar vacío'
+        "string.min": 'nickName debe tener al menos 3 caracteres',
+        "string.max": 'nickName debe tener como máximo 30 caracteres',
+        "string.base": 'nickName debe ser un texto',
+        "string.alphanum": 'nickName debe estar compuesto únicamente por caracteres alfanuméricos',
+        "string.empty": 'nickName no puede estar vacío'
     });
 
 const mail = Joi.string()

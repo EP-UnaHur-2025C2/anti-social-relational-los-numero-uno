@@ -8,7 +8,7 @@ const {
 } = require("../middlewares/validateComment");
 const { validarUserById } = require("../middlewares/validateUsuario");
 const { validarPostById } = require("../middlewares/validatePost");
-const { route } = require("./post.routes");
+
 
 const router = Router();
 

@@ -25,6 +25,10 @@ const route = Router();
  *         - nickName
  *         - mail
  *       properties:
+ *         id:
+ *           type: integer
+ *           description: ID del usuario
+ *           example: 1
  *         nickName:
  *           type: string
  *           description: Nombre de usuario alfanumérico (único)
@@ -65,6 +69,7 @@ const route = Router();
  *             examples:
  *               usuario:
  *                 value:
+ *                   id: 1
  *                   nickName: "lautaro123"
  *                   mail: "lautaro@gmail.com"
  *       400:
@@ -128,6 +133,7 @@ route.post("/create-usuario", validarNickName, validarUser, createUser);
  *             examples:
  *               usuario:
  *                 value:
+ *                   id: 4
  *                   nickName: "lautaroActualizado"
  *                   mail: "nuevoemail@gmail.com"
  *       400:
@@ -151,9 +157,22 @@ route.post("/create-usuario", validarNickName, validarUser, createUser);
  *                 value:
  *                   errors:
  *                     - atributo: "nickName"
- *                       mensaje: "nickName es obligatorio"
+ *                       mensaje: "nickName debe estar compuesto únicamente por caracteres alfanuméricos"
  *                     - atributo: "mail"
- *                       mensaje: "mail debe ser un email válido"
+ *                       mensaje: "mail no puede estar vacío"
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             examples:
+ *               errorId:
+ *                 value:
+ *                   message: "El user con id 123 no existe"
  */
 route.put(
   "/modify-usuario/:userId",
@@ -214,9 +233,11 @@ route.delete("/delete-usuario/:userId", validarUserById, eliminarUser);
  *             examples:
  *               usuarios:
  *                 value:
- *                   - nickName: "lautaro123"
+ *                   - id: 1
+ *                     nickName: "lautaro123"
  *                     mail: "lautaro@gmail.com"
- *                   - nickName: "maria456"
+ *                   - id: 2
+ *                     nickName: "maria456"
  *                     mail: "maria@gmail.com"
  */
 route.get("/", findAll);
@@ -244,9 +265,10 @@ route.get("/", findAll);
  *             examples:
  *               usuario:
  *                 value:
+ *                   id: 5
  *                   nickName: "lautaro123"
  *                   mail: "lautaro@gmail.com"
- *       400:
+ *       404:
  *         description: Usuario no encontrado
  *         content:
  *           application/json:
