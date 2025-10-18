@@ -1,110 +1,56 @@
-const db = require('../../db/models'); 
-const PostTag = db.PostTag;
-const Tag = db.Tag;
+const { PostTag, Tag, Post } = require("../../db/models");
 
 // AÑADE UNA TAG A UN POST
-
 const addTagToPost = async (req, res) => {
-    try {
-        const PostID = req.params.postId;
-        const { TagID } = req.body; 
-        
+  const { tagId, postId } = req.params;
+	const post = await Post.findByPk(postId);
+	const tag = await Tag.findOrCreate({
+		where: { id: tagId },
+		defaults: { id: tagId }
+	});
 
-        const [postTag, created] = await PostTag.findOrCreate({
-            where: { PostID: PostID, TagID: TagID },
-            defaults: { PostID: PostID, TagID: TagID }
-        });
+	tag[0].addPost(post);
 
-        if (!created) {
-            return res.status(409).json({ message: 'Esta etiqueta ya está asociada a este post.' });
-        }
-        
-        res.status(201).json(postTag);
+	const postTag = await PostTag.findOne({
+		where: { PostId: postId, TagId: tagId },
+	});
 
-    } catch (error) {
-        console.error('Error al asociar Tag con Post:', error);
-        
-
-        if (error.name === 'SequelizeForeignKeyConstraintError') {
-             return res.status(404).json({ 
-                message: 'El PostID o TagID proporcionado no existe en la base de datos.'
-            });
-        }
-        
-        res.status(500).json({ 
-            message: 'Error interno del servidor al asociar la etiqueta.',
-            error: error.message
-        });
-    }
+	res.status(201).json(
+		postTag
+	)
 };
-
 
 // BORRADO
 const removeTagFromPost = async (req, res) => {
-    try {
-        const { postId, tagId } = req.params;
-
-        // Eliminar el registro por las dos claves primarias 
-        const deletedRows = await PostTag.destroy({
-            where: { PostID: postId, TagID: tagId }
-        });
-
-        if (deletedRows === 0) {
-            
-            return res.status(404).json(); // 404 si se intenta eliminar algo que no existe
-        }
-        
-       
-        res.status(204).send();  // 204 Si se eliminó
-
-    } catch (error) {
-        console.error('Error al desvincular Tag de Post:', error);
-        res.status(500).json({ 
-            message: 'Error interno del servidor al desvincular la etiqueta.',
-            error: error.message
-        });
-    }
+	const { postId, tagId } = req.params;
+	await PostTag.destroy({
+		where: { PostId: postId, TagId: tagId },
+	});
+	res.status(204).send();
 };
 
 // OBTENER TAGS EN POST POR ID
-
-const getTagsByPostId = async (req, res) => {
-    try {
-        const { postId } = req.params;
-
-
-        const postTags = await PostTag.findAll({
-            where: { PostID: postId },
-
-            include: [{
-                model: Tag,
-                as: 'tag', 
-                attributes: ['id', 'Nombre'] 
-            }]
-        });
-
-        
-        if (postTags.length === 0) { // Si no hay tags, devuelve un array vacío y 200 OK.
-             return res.status(200).json([]);
-        }
-
-
-        const tags = postTags.map(pt => pt.tag);
-
-        res.status(200).json(tags);
-
-    } catch (error) {
-        console.error(`Error al obtener etiquetas para el Post ID ${req.params.postId}:`, error);
-        res.status(500).json({ 
-            message: 'Error interno del servidor al obtener las etiquetas.',
-            error: error.message
-        });
-    }
+const getTagsInPostById = async (req, res) => {
+	const { postId } = req.params;
+	const postTags = await PostTag.findAll({
+		where: { PostId: postId },
+		include: [{ model: Tag, attributes: ['id', 'name'] }],
+	});
+	res.status(200).json(postTags);
 };
 
+const getPostsWithTagById = async (req, res) => {
+	const { tagId } = req.params;
+	const tagPosts = await PostTag.findAll({
+		where: { TagId: tagId },
+		include: [{ model: Post, attributes: ['id', 'texto'] }],
+	});
+	res.status(200).json(tagPosts);
+}
 
 module.exports = {
-    addTagToPost,
-    removeTagFromPost,
-    getTagsByPostId
+  addTagToPost,
+  removeTagFromPost,
+  getTagsInPostById,
+	getPostsWithTagById
 };

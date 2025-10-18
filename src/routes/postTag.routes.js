@@ -1,16 +1,42 @@
-const express = require('express');
-const postTagController = require('../controllers/postTag.controller');
-const { validatePostTagAssociation } = require('../middlewares/validatePostTag');
+const express = require("express");
+const postTagController = require("../controllers/postTag.controller");
+const {
+  validatePostTagSchema,
+  validarPostTagById
+} = require("../middlewares/validatePostTag");
 const router = express.Router();
+const { validarPostById } = require("../middlewares/validatePost");
+const { validarTagByid } = require("../middlewares/validateTags");
 
+//1. Añadir una etiqueta a un post
+router.post(
+  "/associate-tag/post/:postId/tag/:tagId",
+  validatePostTagSchema,
+  validarPostById,
+  postTagController.addTagToPost
+);
 
-// ASOCIA UN TAG A UN POST
-router.post('/:postId/tags', validatePostTagAssociation, postTagController.addTagToPost); 
+//2. Eliminar una etiqueta de un post
+router.delete(
+  "/delete-association/post/:postId/tag/:tagId",
+  validarPostById,
+  validarTagByid,
+  validarPostTagById,
+  postTagController.removeTagFromPost
+);
 
-// Obtiene todas las etiquetas de un post
-router.get('/:postId/tags', postTagController.getTagsByPostId);
+//3. Obtener todas las etiquetas asociadas a un post
+router.get(
+  "/post/:postId/tags",
+  validarPostById,
+  postTagController.getTagsInPostById
+);
 
-// BORRAR
-router.delete('/:postId/tags/:tagId', validatePostTagAssociation, postTagController.removeTagFromPost); 
+//4. Obtener todos los posts asociados a una etiqueta
+router.get(
+  "/tags/:tagId/posts",
+  validarTagByid,
+  postTagController.getPostsWithTagById
+);
 
 module.exports = router;

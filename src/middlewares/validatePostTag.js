@@ -1,29 +1,32 @@
-const validatePostTagAssociation = (req, res, next) => {
-        const postId = req.body.PostID || req.params.postId;
-    
-    const tagId = req.body.TagID || req.params.tagId;
+const genericSchemaValidator = require("../schemas/genericSchemaValidator");
+const { postTagSchema } = require("../schemas/postTagSchema");
+const mapErrors = require("./mapErrors");
+const { PostTag } = require("../../db/models");
 
-    // Verifica que existe
-    if (!postId || !tagId) {
-        return res.status(400).json({ 
-            message: 'Tanto PostID como TagID son obligatorios para esta operación de asociación.' 
-        });
-    }
+const validatePostTagSchema = (req, res, next) => {
+  const errores = genericSchemaValidator(postTagSchema, req.params);
+  if (errores) {
+    res.status(400).json(mapErrors(errores));
+    return;
+  }
+  next();
+};
 
-    // Verifica que sean números enteros positivos válidos
-    const isPostIDValid = Number.isInteger(Number(postId)) && Number(postId) > 0;
-    const isTagIDValid = Number.isInteger(Number(tagId)) && Number(tagId) > 0;
-
-    if (!isPostIDValid || !isTagIDValid) {
-        return res.status(400).json({ 
-            message: 'PostID y TagID deben ser números enteros positivos.' 
-        });
-    }
-    
-
-    next();
+const validarPostTagById = async (req, res, next) => {
+  const { postId, tagId } = req.params;
+  const postTag = await PostTag.findOne({
+    where: { PostId: postId, TagId: tagId },
+  });
+  if (!postTag) {
+    res.status(404).json({
+      message: `La asociación entre el post con id ${postId} y la etiqueta con id ${tagId} no existe`,
+    });
+    return;
+  }
+  next();
 };
 
 module.exports = {
-    validatePostTagAssociation
+  validatePostTagSchema,
+  validarPostTagById
 };
