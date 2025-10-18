@@ -155,7 +155,7 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *             texto: "Nuevo contenido del post"
  *     responses:
  *       200:
- *         description: Post modificado exitosamente
+ *         description: Post modificado exitosamente (solo id, texto y usuarioId)
  *         content:
  *           application/json:
  *             schema:
@@ -169,41 +169,14 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *                   type: string
  *                   description: Contenido del post
  *                   example: "Nuevo contenido del post"
- *                 PostImgs:
- *                   type: array
- *                   description: Lista de imágenes asociadas al post
- *                   items:
- *                     type: object
- *                     properties:
- *                       url:
- *                         type: string
- *                         description: URL de la imagen
- *                         example: "https://example.com/image.jpg"
- *                 Tags:
- *                   type: array
- *                   description: Lista de etiquetas asociadas al post
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                         description: ID único de la etiqueta
- *                         example: 3
- *                       Nombre:
- *                         type: string
- *                         description: Nombre de la etiqueta
- *                         example: "EtiquetaEjemplo"
- *           example:
- *             id: 31
- *             texto: "Nuevo contenido del post"
- *             PostImgs:
- *               - url: "https://example.com/image1.jpg"
- *               - url: "https://example.com/image2.jpg"
- *             Tags:
- *               - id: 3
- *                 Nombre: "EtiquetaEjemplo"
- *               - id: 4
- *                 Nombre: "Etiqueta2"
+ *                 usuarioId:
+ *                   type: integer
+ *                   description: ID del usuario que creó el post
+ *                   example: 5
+ *             example:
+ *               id: 31
+ *               texto: "Nuevo contenido del post"
+ *               usuarioId: 5
  *       400:
  *         description: Error de validación
  *         content:
@@ -220,6 +193,19 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *               example:
  *                 atributo: "texto"
  *                 mensaje: "El campo 'texto' no puede estar vacío."
+ *       404:
+ *         description: Post no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
+ *             examples:
+ *               errorPost:
+ *                 value:
+ *                   mensaje: "El post con id 31 no existe"
  *     description: Solo se permite modificar el campo 'texto'. No se pueden enviar etiquetas ni imágenes.
  */
 route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
@@ -241,8 +227,8 @@ route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
  *     responses:
  *       204:
  *         description: Post eliminado exitosamente
- *       400:
- *         description: Error de validación o post no encontrado
+ *       404:
+ *         description: Post no encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -250,8 +236,10 @@ route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
  *               properties:
  *                 mensaje:
  *                   type: string
- *                   description: Descripción del error
- *                   example: "El post con id 4 no existe."
+ *             examples:
+ *               errorPost:
+ *                 value:
+ *                   mensaje: "El post con id 31 no existe"
  */
 route.delete("/delete-post/:postId", validarPostById, eliminarPostById);
 
@@ -280,13 +268,22 @@ route.delete("/delete-post/:postId", validarPostById, eliminarPostById);
  *                 Tags:
  *                   - id: 3
  *                     Nombre: "EtiquetaEjemplo"
- *                 Comments: []
+ *                 Comments:
+ *                   - texto: "Me gusta este post"
+ *                     Usuario:
+ *                       nickName: "lautaro123"
+ *                   - texto: "Buen contenido"
+ *                     Usuario:
+ *                       nickName: "maria456"
  *               - id: 32
  *                 texto: "Otro ejemplo de contenido para un post."
  *                 usuarioId: 6
  *                 PostImgs: []
  *                 Tags: []
- *                 Comments: []
+ *                 Comments:
+ *                   - texto: "Interesante"
+ *                     Usuario:
+ *                       nickName: "juan789"
  */
 route.get("/", findAll);
 
@@ -320,8 +317,14 @@ route.get("/", findAll);
  *               Tags:
  *                 - id: 3
  *                   Nombre: "EtiquetaEjemplo"
- *               Comments: []
- *       400:
+ *               Comments:
+ *                 - texto: "Me gusta este post"
+ *                   Usuario:
+ *                     nickName: "lautaroActualizado"
+ *                 - texto: "Me gusta este post"
+ *                   Usuario:
+ *                     nickName: "lautaroActualizado"
+ *       404:
  *         description: Post no encontrado
  *         content:
  *           application/json:
@@ -330,6 +333,10 @@ route.get("/", findAll);
  *               properties:
  *                 mensaje:
  *                   type: string
+ *             examples:
+ *               errorPost:
+ *                 value:
+ *                   mensaje: "El post con id 31 no existe"
  */
 route.get("/:postId", validarPostById, findByPk);
 
@@ -364,10 +371,13 @@ route.get("/:postId", validarPostById, findByPk);
  *                 - id: 3
  *                   Nombre: "EtiquetaEjemplo"
  *               Comments:
- *                 - id: 10
- *                   texto: "Comentario de ejemplo"
- *                   usuarioId: 2
- *       400:
+ *                 - texto: "Me gusta este post"
+ *                   Usuario:
+ *                     nickName: "lautaroActualizado"
+ *                 - texto: "Me gusta este post"
+ *                   Usuario:
+ *                     nickName: "lautaroActualizado"
+ *       404:
  *         description: Post no encontrado
  *         content:
  *           application/json:
@@ -376,6 +386,10 @@ route.get("/:postId", validarPostById, findByPk);
  *               properties:
  *                 mensaje:
  *                   type: string
+ *             examples:
+ *               errorPost:
+ *                 value:
+ *                   mensaje: "El post con id 31 no existe"
  */
 route.get("/:postId/all-comments", validarPostById, findByPkAllComments);
 

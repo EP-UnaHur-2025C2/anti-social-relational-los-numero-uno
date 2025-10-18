@@ -18,7 +18,7 @@ const validarPost = (req, res, next) => {
 const validarPostById = async (req, res, next) => {
   const post = await Post.findByPk(req.params.postId);
   if (!post) {
-    res.status(400).json({
+    res.status(404).json({
       message: `El post con id ${req.params.postId} no existe`,
     });
     return;

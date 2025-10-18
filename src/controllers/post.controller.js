@@ -45,7 +45,7 @@ const crearPost = async (req, res) => {
   res.status(201).json({
     ...post.dataValues,
     PostImgs: await post.getPostImgs({ joinTableAttributes: [] }),
-    Tags: await post.getTags({ joinTableAttributes: [] }),
+    Tags: await post.getTags({ joinTableAttributes: [] })
   });
 };
 
@@ -59,11 +59,7 @@ const updatePostById = async (req, res) => {
     { where: { id } }
   );
   const updatedPost = await Post.findByPk(id);
-  res.status(200).json({
-    ...updatedPost.dataValues,
-    PostImgs: await updatedPost.getPostImgs({ joinTableAttributes: [] }),
-    Tags: await updatedPost.getTags({ joinTableAttributes: [] }),
-  });
+  res.status(200).json(updatedPost);
 };
 
 const eliminarPostById = async (req, res) => {
