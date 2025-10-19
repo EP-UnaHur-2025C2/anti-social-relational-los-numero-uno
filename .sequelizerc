@@ -1,0 +1,13 @@
+const path = require('path');
+
+module.exports = {
+  // archivo de configuración
+  'config': path.resolve('db', 'config', 'config.json'),
+
+  //la carpeta de modelos
+  'models-path': path.resolve('db', 'models'),
+
+  //carpeta de migraciones
+  'migrations-path': path.resolve('db', 'migrations'),
+  
+};
