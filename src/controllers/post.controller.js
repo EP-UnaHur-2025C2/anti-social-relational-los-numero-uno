@@ -1,16 +1,25 @@
 const { Post, Comment, PostImg, Tag, Usuario } = require("../../db/models");
 
+
 const crearPost = async (req, res) => {
+  const userId = req.params.userId;
   const data = req.body;
 
   // Crear el Post (ajusta campos según tu modelo)
   const post = await Post.create({
     texto: data.texto,
+    UsuarioId: userId,
   });
 
-  const userId = req.params.userId;
+
+
+  
+  /* Por si acaso comento esto es para probar los cambios en migration, en teoría con userId + los cambios de migration debería funcionar 
   const usuario = await Usuario.findByPk(userId);
   await usuario.addPost(post);
+
+  */
+
 
   const promesas = [];
   const imagenesData = data.PostImgs || [];

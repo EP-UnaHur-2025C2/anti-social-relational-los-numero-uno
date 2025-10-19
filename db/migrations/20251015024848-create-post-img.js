@@ -12,6 +12,18 @@ module.exports = {
       url: {
         type: Sequelize.STRING,
         allowNull: false
+      },
+
+      // Prueba tipo clave foranea
+
+      PostId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Posts',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       }
     });
   },

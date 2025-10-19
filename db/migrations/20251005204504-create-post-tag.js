@@ -16,6 +16,26 @@ module.exports = {
       TagID: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+
+      // Prueba clave foranea en migration
+      PostID: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Posts',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
+      },
+      TagID: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Tags',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       }
     });
   },
