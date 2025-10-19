@@ -17,16 +17,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATEONLY
       },
-      
-      
-
-
-
-
-
-
       // Prueba tipo clave foranea acá
-
       UsuarioId: {
         type: Sequelize.INTEGER,
         allowNull: false,

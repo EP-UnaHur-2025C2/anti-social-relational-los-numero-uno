@@ -4,49 +4,39 @@ const crearPost = async (req, res) => {
   const data = req.body;
   const userId = req.params.userId;
 
-
   const post = await Post.create({
     texto: data.texto,
     UsuarioId: userId,
   });
 
-  const promesas = [];
-  const imagenesData = data.PostImgs || [];
   const tagsData = data.Tags || [];
 
-  // Asociar imagenes si las hay
-  imagenesData.forEach((imagen) => {
-    promesas.push(
-      PostImg.create({ url: imagen.url }).then((postImage) => {
-        return post.addPostImg(postImage);
-      })
-    );
-  });
-
-  // Asociar tags si los hay
-  tagsData.forEach((t) => {
-    promesas.push(
-      Tag.findOrCreate({
+  if (tagsData.length > 0) {
+    for (const t of tagsData) {
+      const [tag] = await Tag.findOrCreate({
         where: { Nombre: t.Nombre },
         defaults: t,
-      }).then((tagInstance) => {
-        const tag = tagInstance[0];
-        return post.addTag(tag);
-      })
-    );
-  });
+      });
+      await post.addTag(tag);
+    }
+  }
 
-  // Esperar a que todas las asociaciones (imágenes + tags) se completen
-  await Promise.all(promesas);
+  const imagenesData = data.PostImgs || [];
+  if (imagenesData.length > 0) {
+    for (const imagen of imagenesData) {
+      const postImage = await PostImg.create({ url: imagen.url });
+      await post.addPostImg(postImage);
+    }
+  }
 
-  // Devolver el post con sus asociaciones básicas
-  // Se vuelve a buscar el post para asegurar que se incluyan los datos de los tags
   const postCompleto = await Post.findByPk(post.id, {
-      include: [
-          { model: PostImg, attributes: ['url'] },
-          { model: Tag, through: { attributes: [] } }
-      ]
+    include: [
+      { model: PostImg, attributes: ["url"] },
+      { model: Tag, through: { attributes: [] } },
+    ],
   });
+
+  res.status(201).json(postCompleto);
 
   res.status(201).json(postCompleto);
 };

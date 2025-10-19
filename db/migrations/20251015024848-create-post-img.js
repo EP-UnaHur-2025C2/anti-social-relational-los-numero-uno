@@ -13,9 +13,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-
       // Prueba tipo clave foranea
-
       PostId: {
         type: Sequelize.INTEGER,
         allowNull: false,

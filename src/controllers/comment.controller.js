@@ -7,7 +7,6 @@ const addCommentInPost = async (req, res) => {
   const { postId, userId } = req.params;
   const { texto } = req.body;
 
-  
   const comment = await Comment.create({
     texto,
     createdAt: new Date().toISOString().slice(0, 10), // convierte la fecha a formato ISO YYYY-MM-DD
@@ -15,22 +14,13 @@ const addCommentInPost = async (req, res) => {
     UsuarioId: userId,
   });
 
-  /* en teoría esto es lo mismo que lo que agregue de postId y usuarioId
-    const promesas = []; //Busco post y user para asociar el comentario y luego lo asocio
-    promesas.push(Post.findByPk(postId).then((post) => post.addComment(comment)));
-    promesas.push(
-      Usuario.findByPk(userId).then((user) => user.addComment(comment))
-    );
-    await Promise.all(promesas);
-    res.status(201).json({
-      ...comment.dataValues,
-      usuario: await Usuario.findByPk(userId),
-      post: await Post.findByPk(postId),
-    });
-    */
-
-
-  res.status(201).json(comment);
+  res.status(201).json({
+    id: comment.id,
+    texto: comment.texto,
+    createdAt: comment.createdAt,
+    usuario: await Usuario.findByPk(userId),
+    post: await Post.findByPk(postId),
+  });
 };
 
 const changeCommentInPost = async (req, res) => {

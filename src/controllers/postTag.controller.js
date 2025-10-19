@@ -3,24 +3,19 @@ const { PostTag, Tag, Post } = require("../../db/models");
 // AÑADE UNA TAG A UN POST
 const addTagToPost = async (req, res) => {
   const { postId } = req.params;
+	const data = req.body; 
 	const post = await Post.findByPk(postId);
-	const tags = req.body.Tags || [];
-	const promesas = []
+  const tagsData = data.Tags || [];
 
-  // Asociar tags si los hay
-  tags.forEach((t) => {
-    promesas.push(
-      Tag.findOrCreate({
+  if (tagsData.length > 0) {
+    for (const t of tagsData) {
+      const [tag] = await Tag.findOrCreate({
         where: { Nombre: t.Nombre },
         defaults: t,
-      }).then((tagInstance) => {
-        const tag = tagInstance[0];
-        return post.addTag(tag);
-      })
-    );
-  });
-
-	await Promise.all(promesas);
+      });
+      await post.addTag(tag);
+    }
+  }
 
 	res.status(201).json({
 		postId: post.id,
