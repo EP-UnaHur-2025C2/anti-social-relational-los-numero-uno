@@ -1,4 +1,4 @@
-const { Post, Comment, PostImg, Tag, Usuario } = require("../../db/models");
+const { Post, Comment, Post_Image, Tag, Usuario } = require("../../db/models");
 
 const crearPost = async (req, res) => {
   const data = req.body;
@@ -24,14 +24,14 @@ const crearPost = async (req, res) => {
   const imagenesData = data.PostImgs || [];
   if (imagenesData.length > 0) {
     for (const imagen of imagenesData) {
-      const postImage = await PostImg.create({ url: imagen.url });
-      await post.addPostImg(postImage);
+      const postImage = await Post_Image.create({ url: imagen.url });
+      await post.addPost_Image(postImage);
     }
   }
 
   const postCompleto = await Post.findByPk(post.id, {
     include: [
-      { model: PostImg, attributes: ["url"] },
+      { model: Post_Image, attributes: ["url"] },
       { model: Tag, through: { attributes: [] } },
     ],
   });
@@ -64,7 +64,7 @@ const findAll = async (_, res) => {
   const data = await Post.findAll({
     include: [
       {
-        model: PostImg,
+        model: Post_Image,
         attributes: ["url"],
       },
       {
@@ -98,7 +98,7 @@ const findByPk = async (req, res) => {
   const data = await Post.findByPk(id, {
     include: [
       {
-        model: PostImg,
+        model: Post_Image,
         attributes: ["url"],
       },
       {
@@ -133,7 +133,7 @@ const findByPkAllComments = async (req, res) => {
   const data = await Post.findByPk(id, {
     include: [
       {
-        model: PostImg,
+        model: Post_Image,
         attributes: ["url"],
       },
       {

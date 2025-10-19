@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "PostId",
         onDelete: 'CASCADE'
       });
-      Post.hasMany(models.PostImg, {
+      Post.hasMany(models.Post_Image, {
         foreignKey: "PostId",
         onDelete: 'CASCADE'
       });

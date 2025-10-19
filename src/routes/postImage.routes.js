@@ -4,7 +4,7 @@ const {
   crearPostImage,
   obtenerImagenPorPost,
   eliminarPostImage,
-} = require("../controllers/postImageController");
+} = require("../controllers/postImage.controller");
 
 router.post("/", crearPostImage);
 

@@ -1,4 +1,4 @@
-const Post_Image = require("../models/postImage");
+const { Post_Image } = require("../../db/models");
 
 const crearPostImage = async (req, res) => {
   try {
@@ -21,7 +21,9 @@ const obtenerImagenPorPost = async (req, res) => {
     const images = await Post_Image.findAll({ where: { PostID: postId } });
 
     if (!images.length) {
-      return res.status(404).json({ message: "No hay imágenes para este post" });
+      return res
+        .status(404)
+        .json({ message: "No hay imágenes para este post" });
     }
 
     res.json(images);

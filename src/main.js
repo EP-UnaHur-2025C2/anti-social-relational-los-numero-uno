@@ -5,10 +5,9 @@ const tagRoutes = require('./routes/tag.routes');
 const postTagRoutes = require('./routes/postTag.routes');
 const commentRoutes = require("./routes/comment.routes");
 const usuarioRoutes = require('./routes/usuario.routes');
+const postImageRoutes = require("./routes/postImage.routes");
 const postRoutes = require('./routes/post.routes');
 const PORT = process.env.PORT || 3000;
-const postImageRoutes = require("./routes/postImageRoutes");
-app.use("/postImage", postImageRoutes);
 
 const swaggerUI = require('swagger-ui-express');
 const specs = require('../swagger/swagger');
@@ -19,6 +18,7 @@ app.use('/postTags', postTagRoutes);
 app.use("/comments", commentRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/posts', postRoutes);
+app.use("/postImage", postImageRoutes);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.listen(PORT, async () => {
