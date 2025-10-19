@@ -7,6 +7,9 @@ const commentRoutes = require("./routes/comment.routes");
 const usuarioRoutes = require('./routes/usuario.routes');
 const postRoutes = require('./routes/post.routes');
 const PORT = process.env.PORT || 3000;
+const postImageRoutes = require("./routes/postImageRoutes");
+app.use("/postImage", postImageRoutes);
+
 const swaggerUI = require('swagger-ui-express');
 const specs = require('../swagger/swagger');
 
