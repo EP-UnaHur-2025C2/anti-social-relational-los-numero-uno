@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       createdAt: { type: DataTypes.DATEONLY, allowNull: false },
+      UsuarioId: { type: DataTypes.INTEGER, onDelete: 'CASCADE' },
+      PostId: { type: DataTypes.INTEGER, onDelete: 'CASCADE' },
     },
     {
       sequelize,

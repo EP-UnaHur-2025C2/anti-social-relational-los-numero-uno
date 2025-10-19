@@ -12,9 +12,19 @@ module.exports = {
       texto: {
         type: Sequelize.STRING,
         allowNull: false
+      },
+      UsuarioId: { // Tipo clave foranea acá
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Usuarios', // La conecto a Usuario por la key de id
+          key: 'id'      
+        },
+        onDelete: 'CASCADE'  // El CASCADE acá es lo que debería hacer que lo borre también
       }
     });
   },
+  
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Posts');
   }

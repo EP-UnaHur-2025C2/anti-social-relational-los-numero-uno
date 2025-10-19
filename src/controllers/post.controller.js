@@ -2,51 +2,43 @@ const { Post, Comment, PostImg, Tag, Usuario } = require("../../db/models");
 
 const crearPost = async (req, res) => {
   const data = req.body;
+  const userId = req.params.userId;
 
-  // Crear el Post (ajusta campos según tu modelo)
   const post = await Post.create({
     texto: data.texto,
+    UsuarioId: userId,
   });
 
-  const userId = req.params.userId;
-  const usuario = await Usuario.findByPk(userId);
-  await usuario.addPost(post);
-
-  const promesas = [];
-  const imagenesData = data.PostImgs || [];
   const tagsData = data.Tags || [];
 
-  // Asociar imagenes si las hay
-  imagenesData.forEach((imagen) => {
-    promesas.push(
-      PostImg.create({ url: imagen.url }).then((postImage) => {
-        return post.addPostImg(postImage);
-      })
-    );
-  });
-
-  // Asociar tags si los hay
-  tagsData.forEach((t) => {
-    promesas.push(
-      Tag.findOrCreate({
+  if (tagsData.length > 0) {
+    for (const t of tagsData) {
+      const [tag] = await Tag.findOrCreate({
         where: { Nombre: t.Nombre },
         defaults: t,
-      }).then((tagInstance) => {
-        const tag = tagInstance[0];
-        return post.addTag(tag);
-      })
-    );
+      });
+      await post.addTag(tag);
+    }
+  }
+
+  const imagenesData = data.PostImgs || [];
+  if (imagenesData.length > 0) {
+    for (const imagen of imagenesData) {
+      const postImage = await PostImg.create({ url: imagen.url });
+      await post.addPostImg(postImage);
+    }
+  }
+
+  const postCompleto = await Post.findByPk(post.id, {
+    include: [
+      { model: PostImg, attributes: ["url"] },
+      { model: Tag, through: { attributes: [] } },
+    ],
   });
 
-  // Esperar a que todas las asociaciones (imágenes + tags) se completen
-  await Promise.all(promesas);
+  res.status(201).json(postCompleto);
 
-  // Devolver el post con sus asociaciones básicas
-  res.status(201).json({
-    ...post.dataValues,
-    PostImgs: await post.getPostImgs({ joinTableAttributes: [] }),
-    Tags: await post.getTags({ joinTableAttributes: [] })
-  });
+  res.status(201).json(postCompleto);
 };
 
 const updatePostById = async (req, res) => {

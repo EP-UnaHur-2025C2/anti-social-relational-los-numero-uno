@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   Post.init(
     {
       texto: { type: DataTypes.STRING, allowNull: false },
+      UsuarioId: { type: DataTypes.INTEGER, onDelete: 'CASCADE' },
     },
     {
       sequelize,

@@ -16,7 +16,28 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATEONLY
+      },
+      // Prueba tipo clave foranea acá
+      UsuarioId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Usuarios',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
+      },
+      PostId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Posts',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       }
+
+
     });
   },
   async down(queryInterface, Sequelize) {

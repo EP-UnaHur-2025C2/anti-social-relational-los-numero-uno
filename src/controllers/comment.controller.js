@@ -2,6 +2,7 @@ const { Comment } = require("../../db/models");
 const { Post } = require("../../db/models");
 const { Usuario } = require("../../db/models");
 const { Op } = require("sequelize");
+
 const addCommentInPost = async (req, res) => {
   const { postId, userId } = req.params;
   const { texto } = req.body;
@@ -9,18 +10,16 @@ const addCommentInPost = async (req, res) => {
   const comment = await Comment.create({
     texto,
     createdAt: new Date().toISOString().slice(0, 10), // convierte la fecha a formato ISO YYYY-MM-DD
+    PostId: postId,
+    UsuarioId: userId,
   });
 
-  const promesas = []; //Busco post y user para asociar el comentario y luego lo asocio
-  promesas.push(Post.findByPk(postId).then((post) => post.addComment(comment)));
-  promesas.push(
-    Usuario.findByPk(userId).then((user) => user.addComment(comment))
-  );
-  await Promise.all(promesas);
   res.status(201).json({
-    ...comment.dataValues,
+    id: comment.id,
+    texto: comment.texto,
+    createdAt: comment.createdAt,
     usuario: await Usuario.findByPk(userId),
-    post: await Post.findByPk(postId)
+    post: await Post.findByPk(postId),
   });
 };
 
@@ -81,8 +80,8 @@ const getUserCommentsInPostById = async (req, res) => {
   const post = await Post.findByPk(postId);
   const comments = await post.getComments({
     where: {
-      usuarioId: { [Op.eq]: userId } 
-    }
+      usuarioId: { [Op.eq]: userId },
+    },
   });
   res.status(200).json(comments);
 };
