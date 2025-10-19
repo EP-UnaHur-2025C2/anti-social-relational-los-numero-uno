@@ -6,12 +6,10 @@ module.exports = (sequelize, DataTypes) => {
   class PostTag extends Model {
     static associate(models) {
       PostTag.belongsTo(models.Tag, { // PostTag pertenece a Tag (Clave Foránea TagId)
-        foreignKey: 'TagId',
-        as: 'tag'
+        foreignKey: 'TagId'
       });
       PostTag.belongsTo(models.Post, {
-        foreignKey: 'PostId',
-        as: 'post'
+        foreignKey: 'PostId'
       }); // Asociación agregada con Post (muchos a uno)
     }
   }

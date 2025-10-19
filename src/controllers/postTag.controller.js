@@ -2,21 +2,32 @@ const { PostTag, Tag, Post } = require("../../db/models");
 
 // AÑADE UNA TAG A UN POST
 const addTagToPost = async (req, res) => {
-  const { tagId, postId } = req.params;
+  const { postId } = req.params;
 	const post = await Post.findByPk(postId);
-	const tag = await Tag.findOrCreate({
-		where: { id: tagId },
-		defaults: { id: tagId }
-	});
+	const tags = req.body.Tags || [];
+	const promesas = []
 
-	tag[0].addPost(post);
+  // Asociar tags si los hay
+  tags.forEach((t) => {
+    promesas.push(
+      Tag.findOrCreate({
+        where: { Nombre: t.Nombre },
+        defaults: t,
+      }).then((tagInstance) => {
+        const tag = tagInstance[0];
+        return post.addTag(tag);
+      })
+    );
+  });
 
-	const postTag = await PostTag.findOne({
-		where: { PostId: postId, TagId: tagId },
-	});
+	await Promise.all(promesas);
 
-	res.status(201).json(
-		postTag
+	res.status(201).json({
+		postId: post.id,
+		Tags: await post.getTags(
+			{ attributes: ['id', 'Nombre'], joinTableAttributes: [] }
+		)
+	}
 	)
 };
 
@@ -34,7 +45,8 @@ const getTagsInPostById = async (req, res) => {
 	const { postId } = req.params;
 	const postTags = await PostTag.findAll({
 		where: { PostId: postId },
-		include: [{ model: Tag, attributes: ['id', 'name'] }],
+		attributes: [],
+		include: [{ model: Tag, attributes: ['id', 'Nombre'] }],
 	});
 	res.status(200).json(postTags);
 };
@@ -43,6 +55,7 @@ const getPostsWithTagById = async (req, res) => {
 	const { tagId } = req.params;
 	const tagPosts = await PostTag.findAll({
 		where: { TagId: tagId },
+		attributes: [],
 		include: [{ model: Post, attributes: ['id', 'texto'] }],
 	});
 	res.status(200).json(tagPosts);

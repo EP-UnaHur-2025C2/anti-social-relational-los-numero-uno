@@ -1,20 +1,13 @@
 const Joi = require("joi");
+const { tagSchema } = require("./tagSchema");
 
-const postTagSchema = Joi.object({
-  postId: Joi.number().integer().positive().required().messages({
-    "number.base": '"postId" debe ser un número',
-    "number.integer": '"postId" debe ser un número entero',
-    "number.positive": '"postId" debe ser un número positivo',
-    "any.required": '"postId" es un campo obligatorio',
-  }),
-  tagId: Joi.number().integer().positive().required().messages({
-    "number.base": '"tagId" debe ser un número',
-    "number.integer": '"tagId" debe ser un número entero',
-    "number.positive": '"tagId" debe ser un número positivo',
-    "any.required": '"tagId" es un campo obligatorio',
+const tagAssociationSchema = Joi.object({
+  Tags: Joi.array().items(tagSchema).min(1).unique((a, b) => a.Nombre === b.Nombre).messages({
+    "array.base": `El atributo "tags" debe ser un array de objetos a crear`,
+    "array.min": `El array de tags debe tener al menos un elemento`,
+    "array.unique": `El array de tags no debe contener elementos duplicados`
   }),
 });
-
 module.exports = {
-  postTagSchema,
+  tagAssociationSchema
 };
