@@ -18,7 +18,7 @@ app.use('/postTags', postTagRoutes);
 app.use("/comments", commentRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/posts', postRoutes);
-app.use("/postImage", postImageRoutes);
+app.use("/postImages", postImageRoutes);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.listen(PORT, async () => {

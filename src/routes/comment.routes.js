@@ -20,8 +20,8 @@ const router = Router();
  *       type: object
  *       required:
  *         - texto
- *         - userId
- *         - postId
+ *         - UsuarioId
+ *         - PostId
  *       properties:
  *         id:
  *           type: integer
@@ -31,11 +31,11 @@ const router = Router();
  *           type: string
  *           description: El texto del comentario
  *           example: "Este es un comentario de ejemplo"
- *         userId:
+ *         UsuarioId:
  *           type: integer
  *           description: El ID del usuario que hizo el comentario
  *           example: 45
- *         postId:
+ *         PostId:
  *           type: integer
  *           description: El ID del post al que pertenece el comentario
  *           example: 67

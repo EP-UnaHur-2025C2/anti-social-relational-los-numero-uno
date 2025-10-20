@@ -29,12 +29,13 @@ const route = Router();
  *           type: string
  *           description: Contenido del post
  *           example: "Este es un ejemplo de contenido para un post."
- *         usuarioId:
+ *         UsuarioId:
  *           type: integer
  *           description: ID del usuario que creó el post
  *           example: 5
  *       required:
  *         - texto
+ *         - UsuarioId
  */
 
 //1. Crear un post VERIFICADO

@@ -15,12 +15,17 @@ const { validarTagByid } = require("../middlewares/validateTags");
  *     PostTag:
  *       type: object
  *       properties:
- *         postId:
+ *         PostId:
+ *           description: ID del post
  *           type: integer
  *           example: 1
- *         tagId:
+ *         TagId:
+ *           description: ID del tag
  *           type: integer
  *           example: 2
+ *       required:
+ *         - PostId
+ *         - TagId
  */
 
 // 1. Añadir una etiqueta(s) a un post VERIFICADO
