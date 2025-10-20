@@ -1,0 +1,80 @@
+{
+  "Crear usuarios": [
+    {
+      "nickName": "usuario1",
+      "mail": "usuario1@test.com"
+    },
+    {
+      "nickName": "usuario2",
+      "mail": "usuario2@test.com"
+    }
+  ],
+  "Modificar usuario": [
+    {
+      "nickName": "usuarioModificado",
+      "mail": "usuarioModificado@test.com"
+    }
+  ],
+
+  "Crear posts": [
+    {
+      "texto": "Mi primer post en Anti-Social"
+    },
+    {
+
+      "texto": "Mi segundo post en Anti-Social"
+    }
+  ],
+   "Modificar post": [
+    {
+  "texto": "Nuevo contenido del post"
+    }
+  ],
+
+  "Crear commentario": [
+    {
+      "texto": "Comentario de prueba 1"
+    },
+    {
+      "texto": "Comentario de prueba 2"
+    }
+  ],
+  "Modificar comentario de prueba 1": [
+    {
+      "texto": "Comentario de prueba 1 modificado",
+      "createdAt": "2025-01-01"
+    }    
+  ],
+
+  "Crear tags": [
+    {
+      "Nombre": "Tag prueba 1"
+    },
+    {
+      "Nombre": "Tag prueba 2"
+    }
+  ],"Modificar tags": [
+    {
+      "Nombre": "Tag prueba modificado"
+    }
+  ],
+
+  
+  "Crear imagenes": [{
+    "images": [
+    {
+      "url": "https://example.com/image1.jpg"
+    },
+    {
+      "url": "https://example.com/image2.jpg"
+    }]
+  }],
+  
+  
+  "Modificar imagenes": [
+    {
+      "url": "https://example.com/imageModificado.jpg"
+    }
+  ]
+}
+ 
