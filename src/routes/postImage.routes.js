@@ -21,6 +21,7 @@ const {
  *       type: object
  *       required:
  *         - url
+ *         - PostId
  *       properties:
  *         id:
  *           description: ID único de la imagen del post
@@ -31,6 +32,10 @@ const {
  *           type: string
  *           format: uri
  *           example: "https://example.com/image.jpg"
+ *         PostId:
+ *           description: ID del post asociado a la imagen
+ *           type: string
+ *           example: 1
  */
 
 //1. agregar imagenes a un post VERIFICADO
@@ -243,7 +248,7 @@ router.post(
  *             example:
  *               message: "El usuario con id 2 no está asociado al post con id 3"
  *       404:
- *         description: Post o imagen no encontrado
+ *         description: Post, imagen o usuario no encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -316,7 +321,7 @@ router.put(
  *             example:
  *               message: "El usuario con id 2 no está asociado al post con id 3"
  *       404:
- *         description: Post o imagen no encontrado
+ *         description: Post,imagen o usuario no encontrado
  *         content:
  *           application/json:
  *             schema:

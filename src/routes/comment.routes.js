@@ -343,31 +343,31 @@ router.delete(
  *                   texto:
  *                     type: string
  *                     example: "Me gusta este post"
- *                   userId:
- *                     type: integer
- *                     example: 1
- *                   postId:
- *                     type: integer
- *                     example: 23
  *                   createdAt:
  *                     type: string
  *                     format: dateonly
  *                     example: "2025-10-17"
+ *                   UsuarioId:
+ *                     type: integer
+ *                     example: 1
+ *                   PostId:
+ *                     type: integer
+ *                     example: 23
  *                   visible:
  *                     type: boolean
  *                     example: true
  *             example:
  *               - id: 8
  *                 texto: "Me gusta este post"
- *                 userId: 1
- *                 postId: 23
  *                 createdAt: "2025-10-17"
+ *                 UsuarioId: 1
+ *                 PostId: 23
  *                 visible: true
  *               - id: 9
  *                 texto: "Otro comentario de ejemplo"
- *                 userId: 2
- *                 postId: 23
  *                 createdAt: "2025-10-16"
+ *                 UsuarioId: 2
+ *                 PostId: 23
  *                 visible: false
  */
 router.get("/", commentController.getComments);
@@ -441,31 +441,31 @@ router.get("/visibles", commentController.getVisibleComments);
  *                   texto:
  *                     type: string
  *                     example: "Me gusta este post"
- *                   userId:
- *                     type: integer
- *                     example: 1
- *                   postId:
- *                     type: integer
- *                     example: 23
  *                   createdAt:
  *                     type: string
  *                     format: dateonly
  *                     example: "2025-10-17"
+ *                   UsuarioId:
+ *                     type: integer
+ *                     example: 1
+ *                   PostId:
+ *                     type: integer
+ *                     example: 23
  *                   visible:
  *                     type: boolean
  *                     example: true
  *             example:
  *               - id: 8
  *                 texto: "Me gusta este post"
- *                 userId: 1
- *                 postId: 23
  *                 createdAt: "2025-10-17"
+ *                 UsuarioId: 1
+ *                 PostId: 23
  *                 visible: true
  *               - id: 9
  *                 texto: "Otro comentario de ejemplo"
- *                 userId: 2
- *                 postId: 23
  *                 createdAt: "2025-10-16"
+ *                 UsuarioId: 2
+ *                 PostId: 23
  *                 visible: false
  */
 router.get(
@@ -502,25 +502,25 @@ router.get(
  *                 texto:
  *                   type: string
  *                   example: "Me gusta este post"
- *                 userId:
- *                   type: integer
- *                   example: 1
- *                 postId:
- *                   type: integer
- *                   example: 23
  *                 createdAt:
  *                   type: string
  *                   format: dateonly
  *                   example: "2025-10-17"
+ *                 UsuarioId:
+ *                   type: integer
+ *                   example: 1
+ *                 PostId:
+ *                   type: integer
+ *                   example: 23
  *                 visible:
  *                   type: boolean
  *                   example: true
  *             example:
  *               id: 8
  *               texto: "Me gusta este post"
- *               userId: 1
- *               postId: 23
  *               createdAt: "2025-10-17"
+ *               UsuarioId: 1
+ *               PostId: 23
  *               visible: true
  *       404:
  *         description: Comentario no encontrado
@@ -572,31 +572,31 @@ router.get(
  *                   texto:
  *                     type: string
  *                     example: "Me gusta este post"
- *                   userId:
- *                     type: integer
- *                     example: 1
- *                   postId:
- *                     type: integer
- *                     example: 23
  *                   createdAt:
  *                     type: string
  *                     format: dateonly
  *                     example: "2025-10-17"
+ *                   UsuarioId:
+ *                     type: integer
+ *                     example: 1
+ *                   PostId:
+ *                     type: integer
+ *                     example: 23
  *                   visible:
  *                     type: boolean
  *                     example: true
  *             example:
  *               - id: 8
  *                 texto: "Me gusta este post"
- *                 userId: 1
- *                 postId: 23
  *                 createdAt: "2025-10-17"
+ *                 UsuarioId: 1
+ *                 PostId: 23
  *                 visible: true
  *               - id: 9
  *                 texto: "Otro comentario de ejemplo"
- *                 userId: 2
- *                 postId: 23
  *                 createdAt: "2025-10-16"
+ *                 UsuarioId: 2
+ *                 PostId: 23
  *                 visible: false
  *       404:
  *         description: Post no encontrado
@@ -648,31 +648,31 @@ router.get(
  *                   texto:
  *                     type: string
  *                     example: "Me gusta este post"
- *                   userId:
- *                     type: integer
- *                     example: 1
- *                   postId:
- *                     type: integer
- *                     example: 23
  *                   createdAt:
  *                     type: string
  *                     format: dateonly
  *                     example: "2025-10-17"
+ *                   UsuarioId:
+ *                     type: integer
+ *                     example: 1
+ *                   PostId:
+ *                     type: integer
+ *                     example: 23
  *                   visible:
  *                     type: boolean
  *                     example: true
  *             example:
  *               - id: 8
  *                 texto: "Me gusta este post"
- *                 userId: 1
- *                 postId: 23
  *                 createdAt: "2025-10-17"
+ *                 UsuarioId: 1
+ *                 PostId: 23
  *                 visible: true
  *               - id: 9
  *                 texto: "Otro comentario de ejemplo"
- *                 userId: 2
- *                 postId: 24
  *                 createdAt: "2025-10-16"
+ *                 UsuarioId: 2
+ *                 PostId: 24
  *                 visible: false
  *       404:
  *         description: Usuario no encontrado
@@ -724,9 +724,6 @@ router.get(
  *               items:
  *                 type: object
  *                 properties:
- *                   visible:
- *                     type: boolean
- *                     example: true
  *                   id:
  *                     type: integer
  *                     example: 5
@@ -743,27 +740,30 @@ router.get(
  *                   PostId:
  *                     type: integer
  *                     example: 24
+ *                   visible:
+ *                     type: boolean
+ *                     example: true
  *             examples:
  *               comentariosUsuarioPost:
  *                 value:
- *                   - visible: false
- *                     id: 4
+ *                   - id: 4
  *                     texto: "Comentario editado"
  *                     createdAt: "2024-06-10"
  *                     UsuarioId: 1
  *                     PostId: 24
- *                   - visible: true
- *                     id: 5
+ *                     visible: false
+ *                   - id: 5
  *                     texto: "Me gusta este post"
  *                     createdAt: "2025-10-17"
  *                     UsuarioId: 1
  *                     PostId: 24
- *                   - visible: true
- *                     id: 6
+ *                     visible: true
+ *                   - id: 6
  *                     texto: "Me gusta este post"
  *                     createdAt: "2025-10-17"
  *                     UsuarioId: 1
  *                     PostId: 24
+ *                     visible: true
  *       404:
  *         description: Post o usuario no encontrado
  *         content:

@@ -21,13 +21,70 @@
       "texto": "Mi primer post en Anti-Social"
     },
     {
-
       "texto": "Mi segundo post en Anti-Social"
     }
   ],
-   "Modificar post": [
+  "Creat posts con tags": [
     {
-  "texto": "Nuevo contenido del post"
+      "texto": "Post con tags",
+      "Tags": [
+        {
+          "Nombre": "Tag prueba 1"
+        },
+        {
+          "Nombre": "Tag prueba 2"
+        }
+      ]
+    }
+  ],
+  "Creat posts con imagenes": [
+    {
+      "texto": "Post con imagenes",
+      "PostImgs": [
+        {
+          "url": "https://example.com/image1.jpg"
+        },
+        {
+          "url": "https://example.com/image2.jpg"
+        }
+      ]
+    },
+    {
+      "texto": "Post con imagenes 2",
+      "PostImgs": [
+        {
+          "url": "https://example.com/image1.jpg"
+        },
+        {
+          "url": "https://example.com/image2.jpg"
+        }
+      ]
+    }
+  ],
+  "Creat posts con imagenes y tags": [
+    {
+      "texto": "Post con tags e imagenes",
+      "Tags": [
+        {
+          "Nombre": "Tag prueba 1"
+        },
+        {
+          "Nombre": "Tag prueba 2"
+        }
+      ],
+      "PostImgs": [
+        {
+          "url": "https://example.com/image1.jpg"
+        },
+        {
+          "url": "https://example.com/image2.jpg"
+        }
+      ]
+    }
+  ],
+  "Modificar post": [
+    {
+      "texto": "Nuevo contenido del post"
     }
   ],
 
@@ -43,7 +100,7 @@
     {
       "texto": "Comentario de prueba 1 modificado",
       "createdAt": "2025-01-01"
-    }    
+    }
   ],
 
   "Crear tags": [
@@ -53,28 +110,29 @@
     {
       "Nombre": "Tag prueba 2"
     }
-  ],"Modificar tags": [
+  ],
+  "Modificar tags": [
     {
       "Nombre": "Tag prueba modificado"
     }
   ],
 
-  
-  "Crear imagenes": [{
-    "images": [
+  "Crear imagenes": [
     {
-      "url": "https://example.com/image1.jpg"
-    },
-    {
-      "url": "https://example.com/image2.jpg"
-    }]
-  }],
-  
-  
+      "images": [
+        {
+          "url": "https://example.com/image1.jpg"
+        },
+        {
+          "url": "https://example.com/image2.jpg"
+        }
+      ]
+    }
+  ],
+
   "Modificar imagenes": [
     {
       "url": "https://example.com/imageModificado.jpg"
     }
   ]
 }
- 

@@ -103,7 +103,7 @@ const { validarTagByid } = require("../middlewares/validateTags");
  *             example:
  *               message: "El usuario con id 2 no está asociado al post con id 5"
  *       '404':
- *         description: Post no encontrado
+ *         description: Post o usuario no encontrado
  *         content:
  *           application/json:
  *             schema:

@@ -58,6 +58,7 @@ const route = Router();
  *         description: ID del usuario que crea el post
  *     requestBody:
  *       required: true
+ *       description: Se puede crear un post solo, con imagenes y/o con etiquetas
  *       content:
  *         application/json:
  *           schema:
@@ -154,6 +155,17 @@ const route = Router();
  *             example:
  *               atributo: "texto"
  *               mensaje: "El campo 'texto' no puede estar vacío."
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 1 no existe"
  */
 route.post(
   "/create-post/user/:userId",
@@ -247,7 +259,7 @@ route.post(
  *             example:
  *               message: "El usuario con id 2 no está asociado al post con id 31"
  *       404:
- *         description: Post no encontrado
+ *         description: Post o usuario no encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -305,7 +317,7 @@ route.put(
  *             example:
  *               message: "El usuario con id 2 no está asociado al post con id 31"
  *       404:
- *         description: Post no encontrado
+ *         description: Post o usuario no encontrado
  *         content:
  *           application/json:
  *             schema:
