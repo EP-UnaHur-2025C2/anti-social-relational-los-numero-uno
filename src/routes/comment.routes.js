@@ -32,6 +32,11 @@ const router = Router();
  *           type: string
  *           description: El texto del comentario
  *           example: "Este es un comentario de ejemplo"
+ *         createdAt:
+ *           type: string
+ *           format: dateonly
+ *           description: Fecha de creación del comentario
+ *           example: "2025-10-17"
  *         UsuarioId:
  *           type: integer
  *           description: El ID del usuario que hizo el comentario
@@ -40,11 +45,6 @@ const router = Router();
  *           type: integer
  *           description: El ID del post al que pertenece el comentario
  *           example: 67
- *         createdAt:
- *           type: string
- *           format: dateonly
- *           description: Fecha de creación del comentario
- *           example: "2025-10-17"
  *         visible:
  *           type: boolean
  *           description: Si el comentario es visible

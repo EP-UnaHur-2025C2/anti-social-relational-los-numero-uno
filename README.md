@@ -70,3 +70,21 @@ Los sponsors definieron los siguientes nombres y descripciones para las entidade
 - Hace el upload de las imganes que se asocian a un POST que lo guarden en una carpeta de imagenes dentro del servidor web.
 - ¿Cómo modelarías que un usuario pueda "seguir" a otros usuarios, y a su vez ser seguido por muchos? Followers
 - Con la información de los post no varia muy seguido que estrategias podrian utilizar la que la información no sea constantemente consultada desde la base de datos.
+
+# DER (Diagrama entidad-relacion)
+![Imagen](./assets/DER-TP1-EP.png)
+
+# Datos de prueba y Documentacion swagger
+Ruta de los datos de prueba (desde la raiz del proyecto):
+```bash
+./src/datos_prueba.json
+```
+Pasos para acceder a la documentación Swagger:
+1) Levantar el servidor:
+```bash
+   npm run dev
+```
+2) Abrir en el navegador (sustituir el puerto si es distinto en la configuración):
+```bash
+   http://localhost:3000/api-docs
+```   
