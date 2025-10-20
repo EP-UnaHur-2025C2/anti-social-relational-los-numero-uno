@@ -26,7 +26,23 @@ const validarPostById = async (req, res, next) => {
   next();
 };
 
+const validarUserAssociationById = async (req, res, next) => {
+  const postId = req.params.postId;
+  const userId = req.params.userId;
+  const post = await Post.findOne({
+    where: { id: postId, UsuarioId: userId },
+  });
+  if (!post) {
+    res.status(403).json({
+      message: `El usuario con id ${userId} no está asociado al post con id ${postId}`,
+    });
+    return;
+  }
+  next();
+}
+
 module.exports = {
   validarPost,
-  validarPostById
+  validarPostById,
+  validarUserAssociationById
 };

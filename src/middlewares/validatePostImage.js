@@ -1,5 +1,5 @@
 const genericSchemaValidator = require('../schemas/genericSchemaValidator');
-const postImageSchema = require('../schemas/postImageSchema');
+const {postImageSchema, addImagesSchema} = require('../schemas/postImageSchema');
 const { Post_Image } = require('../../db/models');
 const mapErrors = require('../middlewares/mapErrors');
 
@@ -12,9 +12,18 @@ const validatePostImage = (req, res, next) => {
   next();
 }
 
-const validarPostImageById = (req, res, next) => {
+const validateAddImages = (req, res, next) => {
+  const errores = genericSchemaValidator(addImagesSchema, req.body);
+  if (errores) {
+    res.status(400).json(mapErrors(errores));
+    return;
+  }
+  next();
+}
+
+const validarPostImageById = async (req, res, next) => {
   const { imageId } = req.params;
-  const image = Post_Image.findOne({ where: { ID: imageId } });
+  const image = await Post_Image.findByPk(imageId);
   if (!image) {
     res.status(404).json({ message:`La imagen con id ${imageId} no existe`});
     return; 
@@ -33,5 +42,6 @@ const validarPostImageAssociation = (req, res, next) => {
 module.exports = {
   validatePostImage,
   validarPostImageById,
-  validarPostImageAssociation
+  validarPostImageAssociation,
+  validateAddImages
 };

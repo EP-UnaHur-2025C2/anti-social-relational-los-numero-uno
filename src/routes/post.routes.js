@@ -73,6 +73,16 @@ const route = Router();
  *                       type: string
  *                       description: Nombre de la etiqueta
  *                       example: "EtiquetaEjemplo"
+ *               PostImgs:
+ *                 type: array
+ *                 description: Lista de imagenes asociadas al post
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     url:
+ *                       type: string
+ *                       description: url de la imagen
+ *                       example: "https://example.com/image.jpg"
  *     responses:
  *       201:
  *         description: Post creado exitosamente
@@ -89,7 +99,7 @@ const route = Router();
  *                   type: string
  *                   description: Contenido del post
  *                   example: "Este es un ejemplo de contenido para un post."
- *                 PostImgs:
+ *                 Post_Images:
  *                   type: array
  *                   description: Lista de imágenes asociadas al post
  *                   items:
@@ -124,6 +134,22 @@ const route = Router();
  *                 Nombre: "EtiquetaEjemplo"
  *               - id: 4
  *                 Nombre: "Etiqueta2"
+ *       400:
+ *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 atributo:
+ *                   type: string
+ *                   description: Atributo que causó el error
+ *                 mensaje:
+ *                   type: string
+ *                   description: Descripción del error
+ *             example:
+ *               atributo: "texto"
+ *               mensaje: "El campo 'texto' no puede estar vacío."
  */
 route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost);
 

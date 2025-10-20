@@ -11,6 +11,7 @@ const crearPost = async (req, res) => {
 
   const tagsData = data.Tags || [];
 
+  //Lo hacemos con un for porque con el findOrCreate tira un error al usar Promise.all
   if (tagsData.length > 0) {
     for (const t of tagsData) {
       const [tag] = await Tag.findOrCreate({
@@ -35,8 +36,6 @@ const crearPost = async (req, res) => {
       { model: Tag, through: { attributes: [] } },
     ],
   });
-
-  res.status(201).json(postCompleto);
 
   res.status(201).json(postCompleto);
 };
