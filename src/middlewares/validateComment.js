@@ -45,9 +45,25 @@ const validarDate = (req, res, next) => {
   }
   next();
 }
+
+const validarUserAssociationById = async (req, res, next) => {
+  const commentId = req.params.commentId;
+  const userId = req.params.userId;
+  const comment = await Comment.findOne({
+    where: { id: commentId, UsuarioId: userId },
+  });
+  if (!comment) {
+    res.status(403).json({
+      message: `El usuario con id ${userId} no está asociado al comentario con id ${commentId}`,
+    });
+    return;
+  }
+  next();
+}
 module.exports = {
   validarCreateCommentSchema,
   validarCommentById,
   validarUpdateCommentSchema,
-  validarDate
+  validarDate,
+  validarUserAssociationById,
 };

@@ -5,12 +5,16 @@ const {
   crearPost,
   eliminarPostById,
   updatePostById,
-  findByPkAllComments
+  findByPkAllComments,
 } = require("../controllers/post.controller");
 
-const {validarUserById} = require("../middlewares/validateUsuario");
+const { validarUserById } = require("../middlewares/validateUsuario");
 
-const { validarPost, validarPostById } = require("../middlewares/validatePost");
+const {
+  validarPost,
+  validarPostById,
+  validarUserAssociationById,
+} = require("../middlewares/validatePost");
 
 const route = Router();
 
@@ -151,12 +155,17 @@ const route = Router();
  *               atributo: "texto"
  *               mensaje: "El campo 'texto' no puede estar vacío."
  */
-route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost);
+route.post(
+  "/create-post/user/:userId",
+  validarUserById,
+  validarPost,
+  crearPost
+);
 
 //2. Modificar un post VERIFICADO
 /**
  * @swagger
- * /posts/modify-post/{postId}:
+ * /posts/modify-post/{postId}/user/{userId}:
  *   put:
  *     summary: Modificar un post existente
  *     tags: [Post]
@@ -167,6 +176,12 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *         schema:
  *           type: integer
  *         description: ID del post a modificar
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario que realiza la modificación
  *     requestBody:
  *       required: true
  *       content:
@@ -220,6 +235,17 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *               example:
  *                 atributo: "texto"
  *                 mensaje: "El campo 'texto' no puede estar vacío."
+ *       403:
+ *         description: Usuario no autorizado o no asociado al post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 2 no está asociado al post con id 31"
  *       404:
  *         description: Post no encontrado
  *         content:
@@ -235,12 +261,19 @@ route.post("/create-post/user/:userId", validarUserById, validarPost, crearPost)
  *                   mensaje: "El post con id 31 no existe"
  *     description: Solo se permite modificar el campo 'texto'. No se pueden enviar etiquetas ni imágenes.
  */
-route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
+route.put(
+  "/modify-post/:postId/user/:userId",
+  validarPostById,
+  validarUserById,
+  validarPost,
+  validarUserAssociationById,
+  updatePostById
+);
 
 //3. eliminar un post VERIFICADO
 /**
  * @swagger
- * /posts/delete-post/{postId}:
+ * /posts/delete-post/{postId}/user/{userId}:
  *   delete:
  *     summary: Eliminar un post existente
  *     tags: [Post]
@@ -251,9 +284,26 @@ route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
  *         schema:
  *           type: integer
  *         description: ID del post a eliminar
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario que realiza la acción
  *     responses:
  *       204:
  *         description: Post eliminado exitosamente
+ *       403:
+ *         description: Usuario no autorizado o no asociado al post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 2 no está asociado al post con id 31"
  *       404:
  *         description: Post no encontrado
  *         content:
@@ -268,7 +318,13 @@ route.put("/modify-post/:postId", validarPostById, validarPost, updatePostById);
  *                 value:
  *                   mensaje: "El post con id 31 no existe"
  */
-route.delete("/delete-post/:postId", validarPostById, eliminarPostById);
+route.delete(
+  "/delete-post/:postId/user/:userId",
+  validarPostById,
+  validarUserById,
+  validarUserAssociationById,
+  eliminarPostById
+);
 
 //4. Obtener todos los posts VERIFICADO
 /**

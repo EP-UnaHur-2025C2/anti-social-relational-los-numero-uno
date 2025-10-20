@@ -5,8 +5,9 @@ const {
   validarCommentById,
   validarUpdateCommentSchema,
   validarDate,
+  validarUserAssociationById
 } = require("../middlewares/validateComment");
-const { validarUserById } = require("../middlewares/validateUsuario");
+const { validarUserById, validarUser } = require("../middlewares/validateUsuario");
 const { validarPostById } = require("../middlewares/validatePost");
 
 
@@ -149,7 +150,7 @@ router.post(
 // 2. Modificar un comentario de un post VERIFICADO
 /**
  * @swagger
- * /comments/modify-comment/{commentId}:
+ * /comments/modify-comment/{commentId}/user/{userId}:
  *   put:
  *     summary: Modificar un comentario
  *     tags: [Comments]
@@ -160,6 +161,12 @@ router.post(
  *         schema:
  *           type: integer
  *         description: ID del comentario
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario que realiza la modificación
  *     requestBody:
  *       required: true
  *       description: Se puede enviar el texto y/o la nueva fecha.
@@ -223,6 +230,17 @@ router.post(
  *                       mensaje: "El texto no puede estar vacío"
  *                     - atributo: "createdAt"
  *                       mensaje: "La fecha no es válida"
+ *       403:
+ *         description: Usuario no autorizado o no asociado al comentario/post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 2 no está asociado al comentario con id 5"
  *       404:
  *         description: Comentario no encontrado
  *         content:
@@ -238,8 +256,10 @@ router.post(
  *                   message: "El comentario con id 123 no existe"
  */
 router.put(
-  "/modify-comment/:commentId",
+  "/modify-comment/:commentId/user/:userId",
   validarCommentById,
+  validarUserById,
+  validarUserAssociationById,
   validarUpdateCommentSchema,
   commentController.changeCommentInPost
 );
@@ -247,7 +267,7 @@ router.put(
 // 3. Eliminar un comentario de un post VERIFICADO
 /**
  * @swagger
- * /comments/delete-comment/{commentId}:
+ * /comments/delete-comment/{commentId}/user/{userId}:
  *   delete:
  *     summary: Eliminar un comentario
  *     tags: [Comments]
@@ -258,9 +278,26 @@ router.put(
  *         schema:
  *           type: integer
  *         description: ID del comentario
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario que realiza la acción
  *     responses:
  *       204:
  *         description: Comentario eliminado exitosamente
+ *       403:
+ *         description: Usuario no autorizado o no asociado al comentario/post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 2 no está asociado al comentario con id 5"
  *       404:
  *         description: Comentario no encontrado
  *         content:
@@ -276,8 +313,10 @@ router.put(
  *                   message: "El comentario con id 123 no existe"
  */
 router.delete(
-  "/delete-comment/:commentId",
+  "/delete-comment/:commentId/user/:userId",
   validarCommentById,
+  validarUserById,
+  validarUserAssociationById,
   commentController.deleteCommentInPost
 );
 

@@ -5,7 +5,8 @@ const {
   validarPostTagById
 } = require("../middlewares/validatePostTag");
 const router = express.Router();
-const { validarPostById } = require("../middlewares/validatePost");
+const { validarPostById, validarUserAssociationById } = require("../middlewares/validatePost");
+const {validarUserById } = require("../middlewares/validateUsuario");
 const { validarTagByid } = require("../middlewares/validateTags");
 
 /**
@@ -31,7 +32,7 @@ const { validarTagByid } = require("../middlewares/validateTags");
 // 1. Añadir una etiqueta(s) a un post VERIFICADO
 /**
  * @swagger
- * /postTags/associate-tags/post/{postId}:
+ * /postTags/associate-tags/post/{postId}/user/{userId}:
  *   post:
  *     tags:
  *       - PostTags
@@ -40,6 +41,12 @@ const { validarTagByid } = require("../middlewares/validateTags");
  *       - name: postId
  *         in: path
  *         description: ID del post
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: userId
+ *         in: path
+ *         description: ID del usuario que realiza la acción
  *         required: true
  *         schema:
  *           type: integer
@@ -84,6 +91,17 @@ const { validarTagByid } = require("../middlewares/validateTags");
  *                       Nombre:
  *                         type: string
  *                         example: "EtiquetaEjemplo"
+ *       '403':
+ *         description: Usuario no asociado al post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 2 no está asociado al post con id 5"
  *       '404':
  *         description: Post no encontrado
  *         content:
@@ -93,19 +111,21 @@ const { validarTagByid } = require("../middlewares/validateTags");
  *               properties:
  *                 message:
  *                   type: string
- *                   example: El post con id 5 no existe
+ *                   example: "El post con id 5 no existe"
  */
 router.post(
-  "/associate-tags/post/:postId/",
+  "/associate-tags/post/:postId/user/:userId",
   validateTagAssociationSchema,
   validarPostById,
+  validarUserById,
+  validarUserAssociationById,
   postTagController.addTagToPost
 );
 
 // 2. Eliminar una etiqueta de un post VERIFICADO
 /**
  * @swagger
- * /postTags/delete-association/post/{postId}/tag/{tagId}:
+ * /postTags/delete-association/post/{postId}/tag/{tagId}/user/{userId}:
  *   delete:
  *     tags:
  *       - PostTags
@@ -123,9 +143,26 @@ router.post(
  *         required: true
  *         schema:
  *           type: integer
+ *       - name: userId
+ *         in: path
+ *         description: ID del usuario que realiza la acción
+ *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
  *       '204':
  *         description: Asociación eliminada correctamente
+ *       '403':
+ *         description: Usuario no asociado al post
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "El usuario con id 2 no está asociado al post con id 5"
  *       '404':
  *         description: Asociación/Post/Tag no encontrado
  *         content:
@@ -138,9 +175,11 @@ router.post(
  *                   example: El tag con id 3 no está asociado al post con id 1
  */
 router.delete(
-  "/delete-association/post/:postId/tag/:tagId",
+  "/delete-association/post/:postId/tag/:tagId/user/:userId",
   validarPostById,
   validarTagByid,
+  validarUserById,
+  validarUserAssociationById,
   validarPostTagById,
   postTagController.removeTagFromPost
 );
