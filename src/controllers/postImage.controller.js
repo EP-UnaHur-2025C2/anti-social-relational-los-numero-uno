@@ -36,7 +36,7 @@ const obtenerTodasLasImagenes = async (_, res) => {
 
 const obtenerImagenPorPost = async (req, res) => {
   const { postId } = req.params;
-  const post = await Post_Image.findAll({ where: { PostID: postId } });
+  const post = await Post_Image.findAll({ where: { PostId: postId } });
   res.status(200).json(post);
 };
 
